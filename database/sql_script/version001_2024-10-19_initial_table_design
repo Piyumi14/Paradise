@@ -1,0 +1,237 @@
+-- create country table
+CREATE TABLE country (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL
+);
+
+
+-- create province table
+CREATE TABLE province (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    country_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    FOREIGN KEY (country_id) REFERENCES country(id)
+);
+
+
+-- create district table
+CREATE TABLE district (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    province_id INT NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    FOREIGN KEY (province_id) REFERENCES province(id)
+);
+
+
+-- create proposals table
+CREATE TABLE proposals (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT UNSIGNED NOT NULL,
+    reference_number VARCHAR(10) UNIQUE,
+    first_name VARCHAR(100) NOT NULL,
+    middle_name VARCHAR(100),
+    last_name VARCHAR(100) NOT NULL,
+    preferred_name VARCHAR(100) NOT NULL,
+    age INT,
+    gender ENUM('Male', 'Female') NOT NULL,
+    height VARCHAR(10),
+    civil_status ENUM('Single', 'Divorced', 'Widowed', 'Engaged', 'Separated') NOT NULL,
+    country_id INT DEFAULT 1 NOT NULL,
+    province_id INT NOT NULL,
+    district_id INT NOT NULL,
+    area VARCHAR(100) NOT NULL,
+    nationality ENUM('Sri Lankan', 'Other') NOT NULL,
+    religion ENUM('Buddhism', 'Christianity', 'Hinduism', 'Islam', 'Other') NOT NULL,
+    cast ENUM('Govigama', 'Radala', 'Salagama', 'Durawe', 'Karava', 'Wahumpura', 'Batgama', 'Berava)') NOT NULL,
+    profile_description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (country_id) REFERENCES country(id),
+    FOREIGN KEY (province_id) REFERENCES province(id),
+    FOREIGN KEY (district_id) REFERENCES district(id)
+);
+
+
+-- create professional_educational table
+CREATE TABLE professional_educational (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    proposal_id INT NOT NULL,
+    occupation VARCHAR(200),
+    industry ENUM('IT', 'Healthcare', 'Engineering', 'Education', 'Finance', 'Government', 'Other'),
+    company VARCHAR(200),
+    salary_range VARCHAR(50),
+    highest_education ENUM('High School', 'Bachelor’s Degree', 'Master’s Degree', 'Doctorate', 'Other'),
+    field_of_study VARCHAR(200),
+    institution VARCHAR(200),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (proposal_id) REFERENCES proposals(id)
+);
+
+
+
+-- create parents table
+CREATE TABLE parents (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    proposal_id INT NOT NULL,
+    father_nationality ENUM('Sri Lankan', 'Other') NOT NULL,
+    father_religion ENUM('Buddhism', 'Christianity', 'Hinduism', 'Islam', 'Other') NOT NULL,
+    father_cast ENUM('Govigama', 'Radala', 'Salagama', 'Durawe', 'Karava', 'Wahumpura', 'Batgama', 'Berava)') NOT NULL,
+    father_profession VARCHAR(100),
+    father_is_live BOOLEAN DEFAULT 1,
+    mother_nationality ENUM('Sri Lankan', 'Other') NOT NULL,
+    mother_religion ENUM('Buddhism', 'Christianity', 'Hinduism', 'Islam', 'Other') NOT NULL,
+    mother_cast ENUM('Govigama', 'Radala', 'Salagama', 'Durawe', 'Karava', 'Wahumpura', 'Batgama', 'Berava)') NOT NULL,
+    mother_profession VARCHAR(100),
+    mother_is_live BOOLEAN DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (proposal_id) REFERENCES proposals(id)
+);
+
+
+
+-- create siblings table
+CREATE TABLE siblings (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    proposal_id INT NOT NULL,  
+    sibling_type ENUM('Elder Brother', 'Younger Brother', 'Elder Sister', 'Younger Sister', 'Twin Sister', 'Twin Brother') NOT NULL, 
+    civil_status ENUM('Single', 'Married', 'Divorced', 'Widowed') NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (proposal_id) REFERENCES proposals(id) ON DELETE CASCADE
+);
+
+
+
+-- create horoscope table
+CREATE TABLE horoscope (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    proposal_id INT NOT NULL,
+    birth_date DATE,
+    birth_time TIME,
+    birth_place VARCHAR(100),
+    lagnaya ENUM('Mesha', 'Wrushamba', 'Mithuna', 'Kataka', 'Sinha', 'Kanya', 'Thula', 'Wrushika', 'Dhanu', 'Makara', 'Kumba', 'Meena') NOT NULL,
+    horoscope_details TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (proposal_id) REFERENCES proposals(id)
+);
+
+
+-- create gallery table
+CREATE TABLE gallery (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    proposal_id INT NOT NULL,
+    image_url VARCHAR(255) NOT NULL, 
+    is_main_photo BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (proposal_id) REFERENCES proposals(id) ON DELETE CASCADE
+);
+
+
+-- create message table
+CREATE TABLE message (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    sender_id BIGINT UNSIGNED NOT NULL,
+    receiver_id BIGINT UNSIGNED NOT NULL,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (sender_id) REFERENCES users(id),
+    FOREIGN KEY (receiver_id) REFERENCES users(id)
+);
+
+
+-- create interest table
+CREATE TABLE interest (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT UNSIGNED NOT NULL,
+    proposal_id INT NOT NULL,
+    status ENUM('Pending', 'Accepted', 'Cancelled') DEFAULT 'Pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (proposal_id) REFERENCES proposals(id)
+);
+
+
+-- create invitation table
+CREATE TABLE invitation (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    sender_id BIGINT UNSIGNED NOT NULL,
+    receiver_id BIGINT UNSIGNED NOT NULL,
+    status ENUM('Pending', 'Accepted', 'Cancelled') DEFAULT 'Pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (sender_id) REFERENCES users(id),
+    FOREIGN KEY (receiver_id) REFERENCES users(id)
+);
+
+
+
+-- insert data for country table
+INSERT INTO country (id,name) VALUES (1,'Sri Lanka');
+INSERT INTO country (id,name) VALUES (2,'Australia');
+INSERT INTO country (id,name) VALUES (3,'United States');
+INSERT INTO country (id,name) VALUES (4,'United Kingdom');
+INSERT INTO country (id,name) VALUES (5,'Canada');
+INSERT INTO country (id,name) VALUES (6,'Dubai');
+INSERT INTO country (id,name) VALUES (7,'France');
+INSERT INTO country (id,name) VALUES (8,'Friendland');
+INSERT INTO country (id,name) VALUES (9,'India');
+INSERT INTO country (id,name) VALUES (10,'Other');
+
+
+-- insert data for province table
+INSERT INTO province (country_id, name) VALUES
+(1, 'Western'),
+(1, 'Central'),
+(1, 'Southern'),
+(1, 'Northern'),
+(1, 'Eastern'),
+(1, 'North Western'),
+(1, 'North Central'),
+(1, 'Uva'),
+(1, 'Sabaragamuwa');
+
+
+-- insert data for district table 
+INSERT INTO district (province_id, name) VALUES
+-- Western Province
+(1, 'Colombo'),
+(1, 'Gampaha'),
+(1, 'Kalutara'),
+-- Central Province
+(2, 'Kandy'),
+(2, 'Matale'),
+(2, 'Nuwara Eliya'),
+-- Southern Province
+(3, 'Galle'),
+(3, 'Matara'),
+(3, 'Hambantota'),
+-- Northern Province
+(4, 'Jaffna'),
+(4, 'Kilinochchi'),
+(4, 'Mannar'),
+(4, 'Vavuniya'),
+(4, 'Mullaitivu'),
+-- Eastern Province
+(5, 'Batticaloa'),
+(5, 'Ampara'),
+(5, 'Trincomalee'),
+-- North Western Province
+(6, 'Kurunegala'),
+(6, 'Puttalam'),
+-- North Central Province
+(7, 'Anuradhapura'),
+(7, 'Polonnaruwa'),
+-- Uva Province
+(8, 'Badulla'),
+(8, 'Monaragala'),
+-- Sabaragamuwa Province
+(9, 'Ratnapura'),
+(9, 'Kegalle');
+
+
