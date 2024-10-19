@@ -15,11 +15,10 @@ class ProposalController extends Controller
         $this->proposalRepo = $proposalRepo;
     }
 
-    /**
-     * Retrieves all proposals based on the provided request parameters.
-     * @param Request $request The incoming request object containing search, sorting, and pagination parameters.
-     * @return \Illuminate\Http\JsonResponse A JSON response containing the paginated and sorted proposal data.
-     */
+    /*function - get all proposals
+    * parameters - request parameters
+    * returns - json response with all proposals
+    */
     public function getAllProposals(Request $request)
     {
         $requestParams = ($request->all());
@@ -55,5 +54,35 @@ class ProposalController extends Controller
         }
 
         return $sortColumnName;
+    }
+
+    public function createProposal(Request $request){
+        $requestParams = ($request->all());
+        $proposalData = $this->_setProposalPostData($requestParams);
+        $proposalDetails = $this->proposalRepo->createProposal($proposalData);
+        return $this->apiResponse($proposalDetails, $this->response_status_code, true);
+    }
+
+    private function _setProposalPostData($request)
+    {
+        return  [
+            "user_id" => $request['user_id'],
+            "reference_number" => $request['reference_number'],
+            "first_name" => $request['first_name'],
+            "middle_name" => $request['middle_name'],
+            "last_name" => $request['last_name'],
+            "preferred_name" => $request['preferred_name'],
+            "age" => $request['age'],
+            "height" => $request['height'],
+            "civil_status" => $request['civil_status'],
+            "country_id" => $request['country_id'],
+            "province_id" => $request['province_id'],
+            "district_id" => $request['district_id'],
+            "area" => $request['area'],
+            "nationality" => $request['nationality'],
+            "religion" => $request['religion'],
+            "cast" => $request['cast'],
+            "profile_description" => $request['profile_description'],
+        ];  
     }
 }

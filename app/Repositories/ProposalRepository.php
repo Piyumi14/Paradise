@@ -40,4 +40,8 @@ class ProposalRepository extends MainRepository implements ProposalRepositoryInt
 
         return $proposals;
     }
+
+    public function createProposal(array $requestParams){
+        return Proposal::create($requestParams);
+    }
 }
