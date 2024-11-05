@@ -2,8 +2,13 @@
 
 namespace Modules\Proposal\App\Repositories;
 
+use App\Models\Gallery;
+use App\Models\Horoscope;
+use App\Models\Parents;
+use App\Models\ProfessionalEducational;
 use Modules\Proposal\App\Contracts\ProposalRepositoryInterface;
 use App\Models\Proposal;
+use App\Models\Sibling;
 use Illuminate\Support\Facades\App;
 use Illuminate\Contracts\Container\Container;
 use App\Repositories\MainRepository;
@@ -47,7 +52,27 @@ class ProposalRepository extends MainRepository implements ProposalRepositoryInt
         return $proposals;
     }
 
-    public function createProposal(array $requestParams){
+    public function createMainProposalDetails(array $requestParams){
         return Proposal::create($requestParams);
+    }
+
+    public function createProfessionalAndEducationalDetails(array $requestParams){
+        return ProfessionalEducational::create($requestParams);
+    }
+
+    public function createParentsDetails(array $requestParams){
+        return Parents::create($requestParams);
+    }
+
+    public function createSiblingsDetails(array $requestParams){
+        return Sibling::create($requestParams);
+    }
+
+    public function createHoroscopeDetails(array $requestParams){
+        return Horoscope::create($requestParams);
+    }
+
+    public function createGalleryDetails(array $requestParams){
+        return Gallery::create($requestParams);
     }
 }

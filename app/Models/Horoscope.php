@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Horoscope extends Model
 {
+    protected $table = 'horoscope';
+
+    protected $primaryKey = 'id';
+
     protected $fillable = [
         'proposal_id',
         'birth_date',

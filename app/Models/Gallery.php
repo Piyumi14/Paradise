@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Gallery extends Model
 {
+    protected $table = 'gallery';
+
+    protected $primaryKey = 'id';
+
     protected $fillable = [
         'proposal_id',
         'image_url',

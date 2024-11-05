@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProfessionalEducational extends Model
 {
+    protected $table = 'professional_educational';
+
+    protected $primaryKey = 'id';
+
     protected $fillable = [
         'proposal_id',
         'occupation',

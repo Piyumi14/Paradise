@@ -6,22 +6,18 @@ use Modules\Proposal\App\Contracts\ProposalRepositoryInterface;
 use Modules\Proposal\App\Http\Resources\ProposalResourcesCollection;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Exception;
 
 class ProposalController extends Controller
 {
     private $proposalRepo;
 
-    public function __construct(ProposalRepositoryInterface $proposalRepo)
-    {
+    public function __construct(ProposalRepositoryInterface $proposalRepo){
         $this->proposalRepo = $proposalRepo;
     }
 
-    /*function - get all proposals
-    * parameters - request parameters
-    * returns - json response with all proposals
-    */
-    public function getAllProposals(Request $request)
-    {
+    //get all proposals
+    public function getAllProposals(Request $request){
         $requestParams = ($request->all());
         $option = $this->_prepareSearchDataArray($requestParams);
         $proposals = $this->proposalRepo->getAllProposals($option);
@@ -29,9 +25,7 @@ class ProposalController extends Controller
         return $this->apiResponse($proposalData, $this->response_status_code, true);
     }
 
-
-    private function _prepareSearchDataArray($requestParams)
-    {
+    private function _prepareSearchDataArray($requestParams){
         return [
             'sortBy' => [
                 'column' => !empty($requestParams['sortColumn']) ? $this->_sortColumn($requestParams['sortColumn']) : '',
@@ -39,12 +33,10 @@ class ProposalController extends Controller
             ],
             'search' => !empty($requestParams['search']) ? $requestParams['search'] : '',
             'paginate' => !empty($requestParams['count_per_page']) ? $requestParams['count_per_page'] : 20,
-
         ];
     }
 
-    private function _sortColumn($sortColumn)
-    {
+    private function _sortColumn($sortColumn){
         $sortColumnName = '';
         switch ($sortColumn) {
             case '':
@@ -57,33 +49,124 @@ class ProposalController extends Controller
         return $sortColumnName;
     }
 
+    //create new proposal
     public function createProposal(Request $request){
-        $requestParams = ($request->all());
-        $proposalData = $this->_setProposalPostData($requestParams);
-        $proposalDetails = $this->proposalRepo->createProposal($proposalData);
-        return $this->apiResponse($proposalDetails, $this->response_status_code, true);
+        try{
+            $requestParams = ($request->all());
+
+            // 01. create main proposal details
+            $proposalData = $this->_setMainProposalPostData($requestParams['reference_number'], $requestParams['main_details']);
+            $proposalDetails = $this->proposalRepo->createMainProposalDetails($proposalData);
+            $requestParams['proposal_id'] = $proposalDetails['id'];
+    
+            // 02. create professional and educational details
+            $professionalAndEducationalData = $this->_setProfessionalAndEducationalPostData($requestParams['proposal_id'], $requestParams['professional_and_educational']);
+            $this->proposalRepo->createProfessionalAndEducationalDetails($professionalAndEducationalData);
+    
+            // 03. create parents details
+            $parentsData = $this->_setParentsPostData($requestParams['proposal_id'], $requestParams['parents']);
+            $this->proposalRepo->createParentsDetails($parentsData);
+    
+            // 04. create siblings details
+            foreach ($requestParams['siblings'] as $sibling) {
+                $siblingsData = $this->_setSiblingsPostData($requestParams['proposal_id'], $sibling);
+                $this->proposalRepo->createSiblingsDetails($siblingsData);
+            }
+    
+            // 05. create horoscope details
+            $horoscopeData = $this->_setHoroscopePostData($requestParams['proposal_id'], $requestParams['horoscope']);
+            $this->proposalRepo->createHoroscopeDetails($horoscopeData);
+    
+            // 06. create gallery details
+            foreach ($requestParams['gallery'] as $gallery) {
+                $galleryData = $this->_setGalleryPostData($requestParams['proposal_id'], $gallery);
+                $this->proposalRepo->createGalleryDetails($galleryData);
+            }
+    
+            $returnData = [];
+            $returnData['proposal_id'] = $requestParams['proposal_id'];
+            $returnData['reference_number'] = $requestParams['reference_number'];
+            return $this->apiResponse($returnData, 200, true, 'proposal created successfully');
+        }catch(Exception $e){
+            return $this->apiResponse([], 400, false, $e->getMessage());
+        }
     }
 
-    private function _setProposalPostData($request)
-    {
+    private function _setMainProposalPostData($reference,$mainDetails){
         return  [
-            "user_id" => $request['user_id'],
-            "reference_number" => $request['reference_number'],
-            "first_name" => $request['first_name'],
-            "middle_name" => $request['middle_name'],
-            "last_name" => $request['last_name'],
-            "preferred_name" => $request['preferred_name'],
-            "age" => $request['age'],
-            "height" => $request['height'],
-            "civil_status" => $request['civil_status'],
-            "country_id" => $request['country_id'],
-            "province_id" => $request['province_id'],
-            "district_id" => $request['district_id'],
-            "area" => $request['area'],
-            "nationality" => $request['nationality'],
-            "religion" => $request['religion'],
-            "cast" => $request['cast'],
-            "profile_description" => $request['profile_description'],
+            "user_id" => 1,
+            "reference_number" => $reference,
+            "first_name" => $mainDetails['first_name'],
+            "middle_name" => $mainDetails['middle_name'],
+            "last_name" => $mainDetails['last_name'],
+            "preferred_name" => $mainDetails['preferred_name'],
+            "age" => $mainDetails['age'],
+            "height" => $mainDetails['height'],
+            "civil_status" => $mainDetails['civil_status'],
+            "country_id" => $mainDetails['country_id'],
+            "province_id" => $mainDetails['province_id'],
+            "district_id" => $mainDetails['district_id'],
+            "area" => $mainDetails['area'],
+            "nationality" => $mainDetails['nationality'],
+            "religion" => $mainDetails['religion'],
+            "cast" => $mainDetails['cast'],
+            "profile_description" => $mainDetails['profile_description'],
+        ];
+    }
+
+    private function _setProfessionalAndEducationalPostData($proposalId, $professionalAndEducationalData){
+        return  [
+            "proposal_id" => $proposalId,
+            "occupation" => $professionalAndEducationalData['occupation'],
+            "industry" => $professionalAndEducationalData['industry'],
+            "company" => $professionalAndEducationalData['company'],
+            "salary_range" => $professionalAndEducationalData['salary_range'],
+            "highest_education" => $professionalAndEducationalData['highest_education'],
+            "field_of_study" => $professionalAndEducationalData['field_of_study'],
+            "institution" => $professionalAndEducationalData['institution'],
+        ];  
+    }
+
+    private function _setParentsPostData($proposalId,$parentsData){
+        return  [
+            "proposal_id" => $proposalId,
+            "father_nationality" => $parentsData['father_nationality'],
+            "father_religion" => $parentsData['father_religion'],
+            "father_cast" => $parentsData['father_cast'],
+            "father_profession" => $parentsData['father_profession'],
+            "father_is_live" => $parentsData['father_is_live'],
+            "mother_nationality" => $parentsData['mother_nationality'],
+            "mother_religion" => $parentsData['mother_religion'],
+            "mother_cast" => $parentsData['mother_cast'],
+            "mother_profession" => $parentsData['mother_profession'],
+            "mother_is_live" => $parentsData['mother_is_live'],
+        ];  
+    }
+
+    private function _setSiblingsPostData($proposalId, $siblingData){
+        return  [
+            "proposal_id" => $proposalId,
+            "sibling_type" => $siblingData['sibling_type'],
+            "civil_status" => $siblingData['civil_status'],
+        ];  
+    }
+
+    private function _setHoroscopePostData($proposalId, $horoscopeData){
+        return  [
+            "proposal_id" => $proposalId,
+            "birth_date" => $horoscopeData['birth_date'],
+            "birth_time" => $horoscopeData['birth_time'],
+            "birth_place" => $horoscopeData['birth_place'],
+            "lagnaya" => $horoscopeData['lagnaya'],
+            "horoscope_details" => $horoscopeData['horoscope_details'],
+        ];  
+    }
+
+    private function _setGalleryPostData($proposalId, $galleryData){
+        return  [
+            "proposal_id" => $proposalId,
+            "image_url" => $galleryData['image_url'],
+            "is_main_photo" => $galleryData['is_main_photo'],
         ];  
     }
 }
