@@ -18,17 +18,12 @@ class ProposalResources extends JsonResource
             'last_name' => $this->last_name,
             'preferred_name' => $this->preferred_name,
             'age' => $this->age,
-            'gender' => $this->gender,
             'height' => $this->height,
-            'civil_status' => $this->civil_status,
-            'country_id' => $this->country_id,
-            'province_id' => $this->province_id,
-            'district_id' => $this->district_id,
+            'gender' => $this->gender,
+            'district_id' => $this->district,
             'nationality' => $this->nationality,
-            'preferred_name' => $this->preferred_name,
             'religion' => $this->religion,
             'cast' => $this->cast,
-            'profile_description' => $this->profile_description,
         ];
 
     }

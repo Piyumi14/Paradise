@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Interest extends Model
 {
+    protected $table = 'interest';
+
+    protected $primaryKey = 'id';
+
     protected $fillable = [
         'user_id',
         'proposal_id',

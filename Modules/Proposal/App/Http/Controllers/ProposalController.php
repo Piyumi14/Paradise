@@ -169,4 +169,12 @@ class ProposalController extends Controller
             "is_main_photo" => $galleryData['is_main_photo'],
         ];  
     }
+
+    //get proposal details by id
+    public function getProposalById($proposalId){
+        if($proposalId){
+            $proposal = $this->proposalRepo->getProposalById($proposalId);
+            return $this->apiResponse($proposal, 200, true, 'proposal retrieved successfully');
+        }
+    }
 }

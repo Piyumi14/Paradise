@@ -12,4 +12,5 @@ interface ProposalRepositoryInterface extends MainRepositoryInterface
     public function createSiblingsDetails(array $requestParams);
     public function createHoroscopeDetails(array $requestParams);
     public function createGalleryDetails(array $requestParams);
+    public function getProposalById($proposalId);
 }

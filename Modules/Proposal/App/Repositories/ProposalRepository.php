@@ -75,4 +75,11 @@ class ProposalRepository extends MainRepository implements ProposalRepositoryInt
     public function createGalleryDetails(array $requestParams){
         return Gallery::create($requestParams);
     }
+
+    public function getProposalById($proposalId){
+        return Proposal::select('*')
+        ->where('id', $proposalId)
+        ->with('country','province', 'district', 'professionalEducational', 'parents', 'siblings', 'horoscope', 'gallery', 'interests')
+        ->first();
+    }
 }

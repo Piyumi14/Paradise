@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class District extends Model
 {
+    protected $table = 'district';
+
+    protected $primaryKey = 'id';
+
     protected $fillable = ['province_id', 'name'];
 
     public function province()
