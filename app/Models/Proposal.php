@@ -15,6 +15,8 @@ class Proposal extends Model
         'preferred_name',
         'age',
         'gender',
+        'phone_number',
+        'email',
         'height',
         'civil_status',
         'country_id',

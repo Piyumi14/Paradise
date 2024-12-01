@@ -1,3 +1,8 @@
+-- create schema and use 
+CREATE SCHEMA paradise;
+USE paradise;
+
+
 -- create country table
 CREATE TABLE country (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -23,10 +28,36 @@ CREATE TABLE district (
 );
 
 
+-- create users table
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_uuid VARCHAR(50) NOT NULL,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    phone_number BIGINT NOT NULL,
+    status BOOLEAN DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+
+-- create user credentials table
+CREATE TABLE user_credential (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    username VARCHAR(100) NOT NULL,
+    password VARCHAR(100) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+
 -- create proposals table
 CREATE TABLE proposals (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id BIGINT UNSIGNED NOT NULL,
+    user_id INT NOT NULL,
     reference_number VARCHAR(10) UNIQUE,
     first_name VARCHAR(100) NOT NULL,
     middle_name VARCHAR(100),
@@ -34,6 +65,8 @@ CREATE TABLE proposals (
     preferred_name VARCHAR(100) NOT NULL,
     age INT,
     gender ENUM('Male', 'Female') NOT NULL,
+    phone_number INT NOT NULL,
+    email VARCHAR(100) NOT NULL,
     height VARCHAR(10),
     civil_status ENUM('Single', 'Divorced', 'Widowed', 'Engaged', 'Separated') NOT NULL,
     country_id INT DEFAULT 1 NOT NULL,
@@ -44,6 +77,7 @@ CREATE TABLE proposals (
     religion ENUM('Buddhism', 'Christianity', 'Hinduism', 'Islam', 'Other') NOT NULL,
     cast ENUM('Govigama', 'Radala', 'Salagama', 'Durawe', 'Karava', 'Wahumpura', 'Batgama', 'Berava)') NOT NULL,
     profile_description TEXT,
+    status BOOLEAN DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id),
@@ -135,8 +169,8 @@ CREATE TABLE gallery (
 -- create message table
 CREATE TABLE message (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    sender_id BIGINT UNSIGNED NOT NULL,
-    receiver_id BIGINT UNSIGNED NOT NULL,
+    sender_id INT NOT NULL,
+    receiver_id INT NOT NULL,
     content TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (sender_id) REFERENCES users(id),
@@ -147,7 +181,7 @@ CREATE TABLE message (
 -- create interest table
 CREATE TABLE interest (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id BIGINT UNSIGNED NOT NULL,
+    user_id INT NOT NULL,
     proposal_id INT NOT NULL,
     status ENUM('Pending', 'Accepted', 'Cancelled') DEFAULT 'Pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -160,8 +194,8 @@ CREATE TABLE interest (
 -- create invitation table
 CREATE TABLE invitation (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    sender_id BIGINT UNSIGNED NOT NULL,
-    receiver_id BIGINT UNSIGNED NOT NULL,
+    sender_id INT NOT NULL,
+    receiver_id INT NOT NULL,
     status ENUM('Pending', 'Accepted', 'Cancelled') DEFAULT 'Pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

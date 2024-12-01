@@ -5,6 +5,8 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Modules\Proposal\App\Contracts\ProposalRepositoryInterface;
 use Modules\Proposal\App\Repositories\ProposalRepository;
+use Modules\User\App\Contracts\UserRepositoryInterface;
+use Modules\User\App\Repositories\UserRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -14,6 +16,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(ProposalRepositoryInterface::class, ProposalRepository::class);
+        $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
     }
 
     /**

@@ -3,17 +3,21 @@
 namespace Modules\Proposal\App\Http\Controllers;
 
 use Modules\Proposal\App\Contracts\ProposalRepositoryInterface;
+use Modules\User\App\Contracts\UserRepositoryInterface;
 use Modules\Proposal\App\Http\Resources\ProposalResourcesCollection;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Exception;
+use Ramsey\Uuid\Uuid;
 
 class ProposalController extends Controller
 {
     private $proposalRepo;
+    private $userRepo;
 
-    public function __construct(ProposalRepositoryInterface $proposalRepo){
+    public function __construct(ProposalRepositoryInterface $proposalRepo, UserRepositoryInterface $userRepo){
         $this->proposalRepo = $proposalRepo;
+        $this->userRepo = $userRepo;
     }
 
     //get all proposals
@@ -54,30 +58,38 @@ class ProposalController extends Controller
         try{
             $requestParams = ($request->all());
 
-            // 01. create main proposal details
-            $proposalData = $this->_setMainProposalPostData($requestParams['reference_number'], $requestParams['main_details']);
+            // 01. create user details
+            $userData = $this->_setUserPostData($requestParams['main_details']);
+            $userDetails = $this->userRepo->createUserDetails($userData);
+
+            // 02. create user credential details
+            $userCredData = $this->_setUserCredentialPostData($userDetails['id'], $requestParams['reference_number']);
+            $userCredDetails = $this->userRepo->createUserCredentialDetails($userCredData);
+
+            // 03. create main proposal details
+            $proposalData = $this->_setMainProposalPostData($userDetails['id'], $requestParams['reference_number'], $requestParams['main_details']);
             $proposalDetails = $this->proposalRepo->createMainProposalDetails($proposalData);
             $requestParams['proposal_id'] = $proposalDetails['id'];
     
-            // 02. create professional and educational details
+            // 04. create professional and educational details
             $professionalAndEducationalData = $this->_setProfessionalAndEducationalPostData($requestParams['proposal_id'], $requestParams['professional_and_educational']);
             $this->proposalRepo->createProfessionalAndEducationalDetails($professionalAndEducationalData);
     
-            // 03. create parents details
+            // 05. create parents details
             $parentsData = $this->_setParentsPostData($requestParams['proposal_id'], $requestParams['parents']);
             $this->proposalRepo->createParentsDetails($parentsData);
     
-            // 04. create siblings details
+            // 06. create siblings details
             foreach ($requestParams['siblings'] as $sibling) {
                 $siblingsData = $this->_setSiblingsPostData($requestParams['proposal_id'], $sibling);
                 $this->proposalRepo->createSiblingsDetails($siblingsData);
             }
     
-            // 05. create horoscope details
+            // 07. create horoscope details
             $horoscopeData = $this->_setHoroscopePostData($requestParams['proposal_id'], $requestParams['horoscope']);
             $this->proposalRepo->createHoroscopeDetails($horoscopeData);
     
-            // 06. create gallery details
+            // 08. create gallery details
             foreach ($requestParams['gallery'] as $gallery) {
                 $galleryData = $this->_setGalleryPostData($requestParams['proposal_id'], $gallery);
                 $this->proposalRepo->createGalleryDetails($galleryData);
@@ -92,15 +104,47 @@ class ProposalController extends Controller
         }
     }
 
-    private function _setMainProposalPostData($reference,$mainDetails){
+    private function _setUserPostData($mainDetails){
+        return [
+            "user_uuid" =>  Uuid::uuid4()->toString(),
+            "first_name" => $mainDetails['first_name'],
+            "last_name" => $mainDetails['last_name'],
+            "email" => $mainDetails['email'],
+            "phone_number" => $mainDetails['phone_number'],
+            "status" => 0
+        ];
+    }
+
+    private function _setUserCredentialPostData($userId, $referenceNumber){
+        
+        return [
+            "user_id" => $userId,
+            "username" => $referenceNumber,
+            "password" => $this->_generateRandomPassword()
+        ];
+    }
+
+    private function _generateRandomPassword($length = 12) {
+        $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+';
+        $password = '';
+        for ($i = 0; $i < $length; $i++) {
+            $password .= $characters[random_int(0, strlen($characters) - 1)];
+        }
+        return $password;
+    }
+    
+    private function _setMainProposalPostData($userId, $reference, $mainDetails){
         return  [
-            "user_id" => 1,
+            "user_id" => $userId,
             "reference_number" => $reference,
             "first_name" => $mainDetails['first_name'],
             "middle_name" => $mainDetails['middle_name'],
             "last_name" => $mainDetails['last_name'],
             "preferred_name" => $mainDetails['preferred_name'],
             "age" => $mainDetails['age'],
+            "gender" => $mainDetails['gender'],
+            "phone_number" => $mainDetails['phone_number'],
+            "email" => $mainDetails['email'],
             "height" => $mainDetails['height'],
             "civil_status" => $mainDetails['civil_status'],
             "country_id" => $mainDetails['country_id'],
