@@ -19,4 +19,6 @@ Route::prefix('invitation')->group(function () {
     Route::post('send', 'InvitationController@sendInvitation');
     Route::post('update-status-of-sent', 'InvitationController@updateSentInvitationStatus');
     Route::post('update-status-of-received', 'InvitationController@updateReceivedInvitationStatus');
+    Route::get('get-all-sent', 'InvitationController@getAllSentInvitations');
+    Route::get('get-all-received', 'InvitationController@getAllReceivedInvitations');
 });

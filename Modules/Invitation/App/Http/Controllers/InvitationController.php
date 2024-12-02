@@ -45,5 +45,17 @@ class InvitationController extends Controller
         return $this->apiResponse($invitationDetails, 200, true, 'invitation status updated successfully');
     }
 
+    //get all sent invitation details
+    public function getAllSentInvitations(){
+        $sentInvitationDetails = $this->invitationRepo->getAllSentInvitations();
+        return $this->apiResponse($sentInvitationDetails, 200, true);
+    }
+    
+    //get all received invitation details
+    public function getAllReceivedInvitations(){
+        $receviedInvitationDetails = $this->invitationRepo->getAllReceivedInvitations();
+        return $this->apiResponse($receviedInvitationDetails, 200, true);
+    }
+
 
 }
