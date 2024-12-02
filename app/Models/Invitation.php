@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Invitation extends Model
 {
+    protected $table = 'invitation';
+
+    protected $primaryKey = 'id';
+
     protected $fillable = [
         'sender_id',
         'receiver_id',
