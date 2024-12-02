@@ -1,20 +1,20 @@
 <?php
 
-namespace Modules\Test\App\Http\Controllers;
+namespace Modules\Admin\App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-class TestController extends Controller
+class AdminController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return view('test::index');
+        return view('admin::index');
     }
 
     /**
@@ -22,7 +22,7 @@ class TestController extends Controller
      */
     public function create()
     {
-        return view('test::create');
+        return view('admin::create');
     }
 
     /**
@@ -38,7 +38,7 @@ class TestController extends Controller
      */
     public function show($id)
     {
-        return view('test::show');
+        return view('admin::show');
     }
 
     /**
@@ -46,7 +46,7 @@ class TestController extends Controller
      */
     public function edit($id)
     {
-        return view('test::edit');
+        return view('admin::edit');
     }
 
     /**
@@ -63,9 +63,5 @@ class TestController extends Controller
     public function destroy($id)
     {
         //
-    }
-
-    public function testing(){
-        dd("TESTING");
     }
 }

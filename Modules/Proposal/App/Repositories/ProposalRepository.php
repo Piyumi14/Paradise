@@ -9,6 +9,7 @@ use App\Models\ProfessionalEducational;
 use Modules\Proposal\App\Contracts\ProposalRepositoryInterface;
 use App\Models\Proposal;
 use App\Models\Sibling;
+use App\Models\User;
 use Illuminate\Support\Facades\App;
 use Illuminate\Contracts\Container\Container;
 use App\Repositories\MainRepository;
@@ -82,4 +83,21 @@ class ProposalRepository extends MainRepository implements ProposalRepositoryInt
         ->with('country','province', 'district', 'professionalEducational', 'parents', 'siblings', 'horoscope', 'gallery', 'interests')
         ->first();
     }
+
+    public function approveProposalById($proposalId){
+        // update proposal status into active
+        $proposalUpdated = Proposal::where('id', $proposalId)->update(['status' => 1]);
+
+        if ($proposalUpdated) {
+            $proposal = Proposal::select('id', 'user_id', 'reference_number')->where('id', $proposalId)->first();
+
+            // update user status into active
+            $userUpdated = User::where('id', $proposal['user_id'])->update(['status' => 1]);
+
+            return $proposal ? $proposal : false;
+        }
+
+        return false;
+    }
+
 }

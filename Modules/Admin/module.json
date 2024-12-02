@@ -1,11 +1,11 @@
 {
-    "name": "Test",
-    "alias": "test",
+    "name": "Admin",
+    "alias": "admin",
     "description": "",
     "keywords": [],
     "priority": 0,
     "providers": [
-        "Modules\\Test\\Providers\\TestServiceProvider"
+        "Modules\\Admin\\Providers\\AdminServiceProvider"
     ],
     "files": []
 }

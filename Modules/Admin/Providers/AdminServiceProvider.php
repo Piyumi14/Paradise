@@ -1,15 +1,15 @@
 <?php
 
-namespace Modules\Test\Providers;
+namespace Modules\Admin\Providers;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
-class TestServiceProvider extends ServiceProvider
+class AdminServiceProvider extends ServiceProvider
 {
-    protected string $moduleName = 'Test';
+    protected string $moduleName = 'Admin';
 
-    protected string $moduleNameLower = 'test';
+    protected string $moduleNameLower = 'admin';
 
     /**
      * Boot the application events.

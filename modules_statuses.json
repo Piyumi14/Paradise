@@ -1,5 +1,6 @@
 {
     "Test": true,
     "Proposal": true,
-    "User": true
+    "User": true,
+    "Admin": true
 }

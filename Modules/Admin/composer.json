@@ -1,5 +1,5 @@
 {
-    "name": "nwidart/test",
+    "name": "nwidart/admin",
     "description": "",
     "authors": [
         {
@@ -17,15 +17,15 @@
     },
     "autoload": {
         "psr-4": {
-            "Modules\\Test\\": "",
-            "Modules\\Test\\App\\": "app/",
-            "Modules\\Test\\Database\\Factories\\": "database/factories/",
-            "Modules\\Test\\Database\\Seeders\\": "database/seeders/"
+            "Modules\\Admin\\": "",
+            "Modules\\Admin\\App\\": "app/",
+            "Modules\\Admin\\Database\\Factories\\": "database/factories/",
+            "Modules\\Admin\\Database\\Seeders\\": "database/seeders/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Modules\\Test\\Tests\\": "tests/"
+            "Modules\\Admin\\Tests\\": "tests/"
         }
     }
 }

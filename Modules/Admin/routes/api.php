@@ -14,10 +14,6 @@ use Illuminate\Support\Facades\Route;
     |
 */
 
-// Route::middleware(['auth:sanctum'])->prefix('v1')->name('api.')->group(function () {
-//     Route::get('test', fn (Request $request) => $request->user())->name('test');
-// });
-
-
-
-Route::post('testing', 'TestController@testing');
+Route::middleware(['auth:sanctum'])->prefix('v1')->name('api.')->group(function () {
+    Route::get('admin', fn (Request $request) => $request->user())->name('admin');
+});

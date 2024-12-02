@@ -221,4 +221,12 @@ class ProposalController extends Controller
             return $this->apiResponse($proposal, 200, true, 'proposal retrieved successfully');
         }
     }
+
+    //approve proposal by id
+    public function approveProposal($proposalId){
+        if($proposalId){
+            $proposal = $this->proposalRepo->approveProposalById($proposalId);
+            return $this->apiResponse($proposal, 200, true, 'proposal approved successfully');
+        }
+    }
 }
