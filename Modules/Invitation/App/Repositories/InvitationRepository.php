@@ -30,4 +30,14 @@ class InvitationRepository extends MainRepository implements InvitationRepositor
         return Invitation::create($requestParams);
     }
 
+    public function updateSentInvitationStatus($requestParams){
+        // 1 should be logged in user
+        return Invitation::where('sender_id', 1)->where('receiver_id', $requestParams['user_id'])->update(['status' => $requestParams['status']]);
+    }
+
+    public function updateReceivedInvitationStatus($requestParams){
+        // 1 should be logged in user
+        return Invitation::where('receiver_id', 1)->where('sender_id', $requestParams['user_id'])->update(['status' => $requestParams['status']]);
+    }
+
 }

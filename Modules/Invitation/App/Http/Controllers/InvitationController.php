@@ -30,4 +30,20 @@ class InvitationController extends Controller
             "receiver_id" => $requestParams['user_id'],
         ];
     }
+
+    //update snet invitation status
+    public function updateSentInvitationStatus(Request $request){
+        $requestParams = ($request->all());
+        $invitationDetails = $this->invitationRepo->updateSentInvitationStatus($requestParams);
+        return $this->apiResponse($invitationDetails, 200, true, 'invitation status updated successfully');
+    }
+
+    //update received invitation status
+    public function updateReceivedInvitationStatus(Request $request){
+        $requestParams = ($request->all());
+        $invitationDetails = $this->invitationRepo->updateReceivedInvitationStatus($requestParams);
+        return $this->apiResponse($invitationDetails, 200, true, 'invitation status updated successfully');
+    }
+
+
 }
