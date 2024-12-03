@@ -25,6 +25,6 @@ Route::prefix('proposal')->group(function () {
     Route::post('create', 'ProposalController@createProposal');
     Route::get('edit/{id}', 'ProposalController@editProposal');
     Route::post('approve/{id}', 'ProposalController@approveProposal');
+
+    Route::post('send-email', 'ProposalController@sendEmail');
 });
-
-

@@ -7,6 +7,7 @@ use Modules\User\App\Contracts\UserRepositoryInterface;
 use Modules\Proposal\App\Http\Resources\ProposalResourcesCollection;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Jobs\SendEmailJob;
 use Exception;
 use Ramsey\Uuid\Uuid;
 
@@ -15,13 +16,15 @@ class ProposalController extends Controller
     private $proposalRepo;
     private $userRepo;
 
-    public function __construct(ProposalRepositoryInterface $proposalRepo, UserRepositoryInterface $userRepo){
+    public function __construct(ProposalRepositoryInterface $proposalRepo, UserRepositoryInterface $userRepo)
+    {
         $this->proposalRepo = $proposalRepo;
         $this->userRepo = $userRepo;
     }
 
     //get all proposals
-    public function getAllProposals(Request $request){
+    public function getAllProposals(Request $request)
+    {
         $requestParams = ($request->all());
         $option = $this->_prepareSearchDataArray($requestParams);
         $proposals = $this->proposalRepo->getAllProposals($option);
@@ -29,7 +32,8 @@ class ProposalController extends Controller
         return $this->apiResponse($proposalData, $this->response_status_code, true);
     }
 
-    private function _prepareSearchDataArray($requestParams){
+    private function _prepareSearchDataArray($requestParams)
+    {
         return [
             'sortBy' => [
                 'column' => !empty($requestParams['sortColumn']) ? $this->_sortColumn($requestParams['sortColumn']) : '',
@@ -40,7 +44,8 @@ class ProposalController extends Controller
         ];
     }
 
-    private function _sortColumn($sortColumn){
+    private function _sortColumn($sortColumn)
+    {
         $sortColumnName = '';
         switch ($sortColumn) {
             case '':
@@ -54,8 +59,9 @@ class ProposalController extends Controller
     }
 
     //create new proposal
-    public function createProposal(Request $request){
-        try{
+    public function createProposal(Request $request)
+    {
+        try {
             $requestParams = ($request->all());
 
             // 01. create user details
@@ -70,41 +76,42 @@ class ProposalController extends Controller
             $proposalData = $this->_setMainProposalPostData($userDetails['id'], $requestParams['reference_number'], $requestParams['main_details']);
             $proposalDetails = $this->proposalRepo->createMainProposalDetails($proposalData);
             $requestParams['proposal_id'] = $proposalDetails['id'];
-    
+
             // 04. create professional and educational details
             $professionalAndEducationalData = $this->_setProfessionalAndEducationalPostData($requestParams['proposal_id'], $requestParams['professional_and_educational']);
             $this->proposalRepo->createProfessionalAndEducationalDetails($professionalAndEducationalData);
-    
+
             // 05. create parents details
             $parentsData = $this->_setParentsPostData($requestParams['proposal_id'], $requestParams['parents']);
             $this->proposalRepo->createParentsDetails($parentsData);
-    
+
             // 06. create siblings details
             foreach ($requestParams['siblings'] as $sibling) {
                 $siblingsData = $this->_setSiblingsPostData($requestParams['proposal_id'], $sibling);
                 $this->proposalRepo->createSiblingsDetails($siblingsData);
             }
-    
+
             // 07. create horoscope details
             $horoscopeData = $this->_setHoroscopePostData($requestParams['proposal_id'], $requestParams['horoscope']);
             $this->proposalRepo->createHoroscopeDetails($horoscopeData);
-    
+
             // 08. create gallery details
             foreach ($requestParams['gallery'] as $gallery) {
                 $galleryData = $this->_setGalleryPostData($requestParams['proposal_id'], $gallery);
                 $this->proposalRepo->createGalleryDetails($galleryData);
             }
-    
+
             $returnData = [];
             $returnData['proposal_id'] = $requestParams['proposal_id'];
             $returnData['reference_number'] = $requestParams['reference_number'];
             return $this->apiResponse($returnData, 200, true, 'proposal created successfully');
-        }catch(Exception $e){
+        } catch (Exception $e) {
             return $this->apiResponse([], 400, false, $e->getMessage());
         }
     }
 
-    private function _setUserPostData($mainDetails){
+    private function _setUserPostData($mainDetails)
+    {
         return [
             "user_uuid" =>  Uuid::uuid4()->toString(),
             "first_name" => $mainDetails['first_name'],
@@ -115,8 +122,9 @@ class ProposalController extends Controller
         ];
     }
 
-    private function _setUserCredentialPostData($userId, $referenceNumber){
-        
+    private function _setUserCredentialPostData($userId, $referenceNumber)
+    {
+
         return [
             "user_id" => $userId,
             "username" => $referenceNumber,
@@ -124,7 +132,8 @@ class ProposalController extends Controller
         ];
     }
 
-    private function _generateRandomPassword($length = 12) {
+    private function _generateRandomPassword($length = 12)
+    {
         $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+';
         $password = '';
         for ($i = 0; $i < $length; $i++) {
@@ -132,8 +141,9 @@ class ProposalController extends Controller
         }
         return $password;
     }
-    
-    private function _setMainProposalPostData($userId, $reference, $mainDetails){
+
+    private function _setMainProposalPostData($userId, $reference, $mainDetails)
+    {
         return  [
             "user_id" => $userId,
             "reference_number" => $reference,
@@ -158,7 +168,8 @@ class ProposalController extends Controller
         ];
     }
 
-    private function _setProfessionalAndEducationalPostData($proposalId, $professionalAndEducationalData){
+    private function _setProfessionalAndEducationalPostData($proposalId, $professionalAndEducationalData)
+    {
         return  [
             "proposal_id" => $proposalId,
             "occupation" => $professionalAndEducationalData['occupation'],
@@ -168,10 +179,11 @@ class ProposalController extends Controller
             "highest_education" => $professionalAndEducationalData['highest_education'],
             "field_of_study" => $professionalAndEducationalData['field_of_study'],
             "institution" => $professionalAndEducationalData['institution'],
-        ];  
+        ];
     }
 
-    private function _setParentsPostData($proposalId,$parentsData){
+    private function _setParentsPostData($proposalId, $parentsData)
+    {
         return  [
             "proposal_id" => $proposalId,
             "father_nationality" => $parentsData['father_nationality'],
@@ -184,18 +196,20 @@ class ProposalController extends Controller
             "mother_cast" => $parentsData['mother_cast'],
             "mother_profession" => $parentsData['mother_profession'],
             "mother_is_live" => $parentsData['mother_is_live'],
-        ];  
+        ];
     }
 
-    private function _setSiblingsPostData($proposalId, $siblingData){
+    private function _setSiblingsPostData($proposalId, $siblingData)
+    {
         return  [
             "proposal_id" => $proposalId,
             "sibling_type" => $siblingData['sibling_type'],
             "civil_status" => $siblingData['civil_status'],
-        ];  
+        ];
     }
 
-    private function _setHoroscopePostData($proposalId, $horoscopeData){
+    private function _setHoroscopePostData($proposalId, $horoscopeData)
+    {
         return  [
             "proposal_id" => $proposalId,
             "birth_date" => $horoscopeData['birth_date'],
@@ -203,30 +217,47 @@ class ProposalController extends Controller
             "birth_place" => $horoscopeData['birth_place'],
             "lagnaya" => $horoscopeData['lagnaya'],
             "horoscope_details" => $horoscopeData['horoscope_details'],
-        ];  
+        ];
     }
 
-    private function _setGalleryPostData($proposalId, $galleryData){
+    private function _setGalleryPostData($proposalId, $galleryData)
+    {
         return  [
             "proposal_id" => $proposalId,
             "image_url" => $galleryData['image_url'],
             "is_main_photo" => $galleryData['is_main_photo'],
-        ];  
+        ];
     }
 
     //get proposal details by id
-    public function getProposalById($proposalId){
-        if($proposalId){
+    public function getProposalById($proposalId)
+    {
+        if ($proposalId) {
             $proposal = $this->proposalRepo->getProposalById($proposalId);
             return $this->apiResponse($proposal, 200, true, 'proposal retrieved successfully');
         }
     }
 
     //approve proposal by id
-    public function approveProposal($proposalId){
-        if($proposalId){
+    public function approveProposal($proposalId)
+    {
+        if ($proposalId) {
             $proposal = $this->proposalRepo->approveProposalById($proposalId);
             return $this->apiResponse($proposal, 200, true, 'proposal approved successfully');
         }
+    }
+
+    public function sendEmail(Request $request)
+    {
+        $requestParams = ($request->all());
+        $emailData = [
+            'to' => $requestParams['email'],
+            'name' => $request['name'],
+            'message' => 'Message from Paradise.lk.',
+        ];
+
+        SendEmailJob::dispatch($emailData);
+
+        return response()->json(['message' => 'Email has been queued.']);
     }
 }
