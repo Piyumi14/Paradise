@@ -10,16 +10,22 @@ use App\Http\Controllers\Controller;
 use App\Jobs\SendEmailJob;
 use Exception;
 use Ramsey\Uuid\Uuid;
+use App\Services\SMSService;
 
 class ProposalController extends Controller
 {
     private $proposalRepo;
     private $userRepo;
+    protected $smsService;
 
-    public function __construct(ProposalRepositoryInterface $proposalRepo, UserRepositoryInterface $userRepo)
-    {
+    public function __construct(
+        ProposalRepositoryInterface $proposalRepo,
+        UserRepositoryInterface $userRepo,
+        SMSService $smsService
+    ) {
         $this->proposalRepo = $proposalRepo;
         $this->userRepo = $userRepo;
+        $this->smsService = $smsService;
     }
 
     //get all proposals
@@ -259,5 +265,14 @@ class ProposalController extends Controller
         SendEmailJob::dispatch($emailData);
 
         return response()->json(['message' => 'Email has been queued.']);
+    }
+
+    public function sendSMS()
+    {
+        $to = '94710197538';
+        $message = 'Hello! This message is generated from Paradise.lk';
+
+        $response = $this->smsService->sendSMS($to, $message);
+        return response()->json($response);
     }
 }
