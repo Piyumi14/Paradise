@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Sibling extends Model
 {
+    protected $table = 'siblings';
+
     protected $fillable = [
         'proposal_id',
         'sibling_type',
