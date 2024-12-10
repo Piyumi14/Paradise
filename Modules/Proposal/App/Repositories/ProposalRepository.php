@@ -5,9 +5,11 @@ namespace Modules\Proposal\App\Repositories;
 use App\Models\Gallery;
 use App\Models\Horoscope;
 use App\Models\Parents;
+use App\Models\Photo;
 use App\Models\ProfessionalEducational;
 use Modules\Proposal\App\Contracts\ProposalRepositoryInterface;
 use App\Models\Proposal;
+use App\Models\Qualification;
 use App\Models\Sibling;
 use App\Models\User;
 use Illuminate\Support\Facades\App;
@@ -53,38 +55,46 @@ class ProposalRepository extends MainRepository implements ProposalRepositoryInt
         return $proposals;
     }
 
-    public function createMainProposalDetails(array $requestParams){
+    public function createMainProposalDetails(array $requestParams)
+    {
         return Proposal::create($requestParams);
     }
 
-    public function createProfessionalAndEducationalDetails(array $requestParams){
-        return ProfessionalEducational::create($requestParams);
+    public function createProfessionalAndEducationalDetails(array $requestParams)
+    {
+        return Qualification::create($requestParams);
     }
 
-    public function createParentsDetails(array $requestParams){
+    public function createParentsDetails(array $requestParams)
+    {
         return Parents::create($requestParams);
     }
 
-    public function createSiblingsDetails(array $requestParams){
+    public function createSiblingsDetails(array $requestParams)
+    {
         return Sibling::create($requestParams);
     }
 
-    public function createHoroscopeDetails(array $requestParams){
+    public function createHoroscopeDetails(array $requestParams)
+    {
         return Horoscope::create($requestParams);
     }
 
-    public function createGalleryDetails(array $requestParams){
-        return Gallery::create($requestParams);
+    public function createGalleryDetails(array $requestParams)
+    {
+        return Photo::create($requestParams);
     }
 
-    public function getProposalById($proposalId){
+    public function getProposalById($proposalId)
+    {
         return Proposal::select('*')
-        ->where('id', $proposalId)
-        ->with('country','province', 'district', 'professionalEducational', 'parents', 'siblings', 'horoscope', 'gallery', 'interests')
-        ->first();
+            ->where('id', $proposalId)
+            ->with('country', 'province', 'district', 'professionalEducational', 'parents', 'siblings', 'horoscope', 'gallery')
+            ->first();
     }
 
-    public function approveProposalById($proposalId){
+    public function approveProposalById($proposalId)
+    {
         // update proposal status into active
         $proposalUpdated = Proposal::where('id', $proposalId)->update(['status' => 1]);
 
@@ -99,5 +109,4 @@ class ProposalRepository extends MainRepository implements ProposalRepositoryInt
 
         return false;
     }
-
 }
