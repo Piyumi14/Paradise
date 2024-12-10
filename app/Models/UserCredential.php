@@ -10,10 +10,10 @@ class UserCredential extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    protected $table = 'user_credential';
+    protected $table = 'user_credentials';
 
     protected $primaryKey = 'id';
-    
+
     protected $fillable = [
         'user_id',
         'username',

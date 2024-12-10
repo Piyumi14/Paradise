@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class District extends Model
 {
-    protected $table = 'district';
+    protected $table = 'districts';
 
     protected $primaryKey = 'id';
 

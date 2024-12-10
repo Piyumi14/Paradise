@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Horoscope extends Model
 {
-    protected $table = 'horoscope';
+    protected $table = 'horoscopes';
 
     protected $primaryKey = 'id';
 

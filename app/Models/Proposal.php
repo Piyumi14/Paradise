@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Proposal extends Model
 {
+    protected $table = 'proposals';
+
     protected $fillable = [
         'user_id',
         'reference_number',
@@ -51,7 +53,7 @@ class Proposal extends Model
 
     public function professionalEducational()
     {
-        return $this->hasOne(ProfessionalEducational::class);
+        return $this->hasOne(Qualification::class);
     }
 
     public function parents()
@@ -71,11 +73,6 @@ class Proposal extends Model
 
     public function gallery()
     {
-        return $this->hasMany(Gallery::class);
-    }
-
-    public function interests()
-    {
-        return $this->hasMany(Interest::class);
+        return $this->hasMany(Photo::class);
     }
 }

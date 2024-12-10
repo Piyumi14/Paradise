@@ -4,22 +4,22 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Interest extends Model
+class Qualification extends Model
 {
-    protected $table = 'interest';
+    protected $table = 'qualifications';
 
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'user_id',
         'proposal_id',
-        'status'
+        'occupation',
+        'industry',
+        'company',
+        'salary_range',
+        'highest_education',
+        'field_of_study',
+        'institution'
     ];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
 
     public function proposal()
     {
