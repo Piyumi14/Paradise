@@ -7,7 +7,6 @@ use Modules\User\App\Contracts\UserRepositoryInterface;
 use Modules\Proposal\App\Http\Resources\ProposalResourcesCollection;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Jobs\SendEmailJob;
 use App\Jobs\UserNotifyEmailJob;
 use Exception;
 use Ramsey\Uuid\Uuid;
@@ -258,15 +257,7 @@ class ProposalController extends Controller
     public function sendEmail(Request $request)
     {
         $requestParams = ($request->all());
-        $emailData = [
-            'to' => $requestParams['email'],
-            'name' => $request['name'],
-            'message' => 'Message from Paradise.lk.',
-        ];
-
-        UserNotifyEmailJob::dispatch($emailData);
-
-        return response()->json(['message' => 'Email has been queued.']);
+        return sendEmail($requestParams);
     }
 
     //send sms

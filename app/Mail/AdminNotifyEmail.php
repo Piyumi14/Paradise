@@ -19,7 +19,7 @@ class AdminNotifyEmail extends Mailable
 
     public function build()
     {
-        return $this->view('emails.example')
+        return $this->view('emails.adminNotifyEmail')
             ->with('data', $this->data)
             ->subject('Paradise.lk Email');
     }
