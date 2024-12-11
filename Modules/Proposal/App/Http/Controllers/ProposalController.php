@@ -263,10 +263,10 @@ class ProposalController extends Controller
     //send sms
     public function sendSMS()
     {
-        $to = '94710197538';
-        $message = 'Hello! This message is generated from Paradise.lk';
-
-        $response = $this->smsService->sendSMS($to, $message);
-        return response()->json($response);
+        $requestParams = [
+            'phone_number' => '94710197538',
+            'message' => 'Hello! This message is generated from Paradise.lk'
+        ];
+        return sendSMS($requestParams);
     }
 }

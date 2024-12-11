@@ -2,6 +2,7 @@
 
 use App\Jobs\AdminNotifyEmailJob;
 use App\Jobs\UserNotifyEmailJob;
+use App\Services\SMSService;
 
 /**
  * @param array 
@@ -25,4 +26,22 @@ function sendEmail($requestParams)
     }
 
     return response()->json(['message' => 'Email has been queued.']);
+}
+
+/**
+ * @param array
+ * - 'phone_number': The recipient's phone number.
+ * - 'message': The content of the SMS message.
+ *
+ * @return A JSON response containing the result of the SMS sending operation.
+ */
+function sendSMS($requestParams)
+{
+    $to = $requestParams['phone_number'];
+    $message = $requestParams['message'];
+
+    $smsService = app(SMSService::class);
+    $response = $smsService->sendSMS($to, $message);
+
+    return response()->json($response);
 }
