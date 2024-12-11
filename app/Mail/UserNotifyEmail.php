@@ -19,7 +19,7 @@ class UserNotifyEmail extends Mailable
 
     public function build()
     {
-        return $this->view('emails.example')
+        return $this->view('emails.userNotifyEmail')
             ->with('data', $this->data)
             ->subject('Paradise.lk Email');
     }
