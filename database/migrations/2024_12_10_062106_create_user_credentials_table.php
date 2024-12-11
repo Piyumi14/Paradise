@@ -11,7 +11,7 @@ class CreateUserCredentialsTable extends Migration
         Schema::create('user_credentials', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users');
-            $table->string('username', 100);
+            $table->string('user_name', 100);
             $table->string('password', 100);
             $table->timestamps();
         });

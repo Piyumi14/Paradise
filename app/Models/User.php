@@ -5,13 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
 {
-    protected $table = 'users';
+    use HasApiTokens;
 
+    protected $table = 'users';
+    public $timestamps = true;
     protected $primaryKey = 'id';
-    
+
     protected $fillable = [
         'user_uuid',
         'first_name',
