@@ -8,6 +8,7 @@ use Modules\Proposal\App\Http\Resources\ProposalResourcesCollection;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Jobs\SendEmailJob;
+use App\Jobs\UserNotifyEmailJob;
 use Exception;
 use Ramsey\Uuid\Uuid;
 use App\Services\SMSService;
@@ -253,6 +254,7 @@ class ProposalController extends Controller
         }
     }
 
+    //send email
     public function sendEmail(Request $request)
     {
         $requestParams = ($request->all());
@@ -262,11 +264,12 @@ class ProposalController extends Controller
             'message' => 'Message from Paradise.lk.',
         ];
 
-        SendEmailJob::dispatch($emailData);
+        UserNotifyEmailJob::dispatch($emailData);
 
         return response()->json(['message' => 'Email has been queued.']);
     }
 
+    //send sms
     public function sendSMS()
     {
         $to = '94710197538';
