@@ -3,5 +3,6 @@
     "Proposal": true,
     "User": true,
     "Admin": true,
-    "Invitation": true
+    "Invitation": true,
+    "Location": true
 }

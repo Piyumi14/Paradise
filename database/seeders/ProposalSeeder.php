@@ -24,7 +24,7 @@ class ProposalSeeder extends Seeder
                 ]);
 
                 // Insert user credential data
-                DB::table('user_credential')->insert([
+                DB::table('user_credentials')->insert([
                     'user_id' => $userId,
                     'username' => 'user' . $i,
                     'password' => 'mew_6UP1=eg0',
@@ -60,7 +60,7 @@ class ProposalSeeder extends Seeder
                 ]);
 
                 // Insert professional and educational data
-                DB::table('professional_educational')->insert([
+                DB::table('qualifications')->insert([
                     'proposal_id' => $proposalId,
                     'occupation' => 'Occupation' . $i,
                     'industry' => 'Healthcare',
@@ -106,7 +106,7 @@ class ProposalSeeder extends Seeder
                 }
 
                 // Insert horoscope data
-                DB::table('horoscope')->insert([
+                DB::table('horoscopes')->insert([
                     'proposal_id' => $proposalId,
                     'birth_date' => now()->subYears(30 + $i)->toDateString(),
                     'birth_time' => '0' . $i . ':30:15',
@@ -123,7 +123,7 @@ class ProposalSeeder extends Seeder
                     ['image_url' => 'images/user' . $i . '_2.jpg', 'is_main_photo' => false],
                 ];
                 foreach ($gallery as $image) {
-                    DB::table('gallery')->insert([
+                    DB::table('photos')->insert([
                         'proposal_id' => $proposalId,
                         'image_url' => $image['image_url'],
                         'is_main_photo' => $image['is_main_photo'],

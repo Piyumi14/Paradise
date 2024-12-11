@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Parents extends Model
 {
+    protected $table = 'parents';
+
     protected $fillable = [
         'proposal_id',
         'father_nationality',

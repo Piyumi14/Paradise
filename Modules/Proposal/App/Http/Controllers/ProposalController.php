@@ -7,19 +7,25 @@ use Modules\User\App\Contracts\UserRepositoryInterface;
 use Modules\Proposal\App\Http\Resources\ProposalResourcesCollection;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Jobs\SendEmailJob;
+use App\Jobs\UserNotifyEmailJob;
 use Exception;
 use Ramsey\Uuid\Uuid;
+use App\Services\SMSService;
 
 class ProposalController extends Controller
 {
     private $proposalRepo;
     private $userRepo;
+    protected $smsService;
 
-    public function __construct(ProposalRepositoryInterface $proposalRepo, UserRepositoryInterface $userRepo)
-    {
+    public function __construct(
+        ProposalRepositoryInterface $proposalRepo,
+        UserRepositoryInterface $userRepo,
+        SMSService $smsService
+    ) {
         $this->proposalRepo = $proposalRepo;
         $this->userRepo = $userRepo;
+        $this->smsService = $smsService;
     }
 
     //get all proposals
@@ -247,17 +253,20 @@ class ProposalController extends Controller
         }
     }
 
+    //send email
     public function sendEmail(Request $request)
     {
         $requestParams = ($request->all());
-        $emailData = [
-            'to' => $requestParams['email'],
-            'name' => $request['name'],
-            'message' => 'Message from Paradise.lk.',
+        return sendEmail($requestParams);
+    }
+
+    //send sms
+    public function sendSMS()
+    {
+        $requestParams = [
+            'phone_number' => '94710197538',
+            'message' => 'Hello! This message is generated from Paradise.lk'
         ];
-
-        SendEmailJob::dispatch($emailData);
-
-        return response()->json(['message' => 'Email has been queued.']);
+        return sendSMS($requestParams);
     }
 }
