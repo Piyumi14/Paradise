@@ -11,6 +11,7 @@ use App\Jobs\UserNotifyEmailJob;
 use Exception;
 use Ramsey\Uuid\Uuid;
 use App\Services\SMSService;
+use Illuminate\Support\Facades\DB;
 
 class ProposalController extends Controller
 {
@@ -68,7 +69,10 @@ class ProposalController extends Controller
     public function createProposal(Request $request)
     {
         try {
-            $requestParams = ($request->all());
+            $requestParams = $request->all();
+
+            // begin a transaction
+            DB::beginTransaction();
 
             // 01. create user details
             $userData = $this->_setUserPostData($requestParams['main_details']);
@@ -76,7 +80,7 @@ class ProposalController extends Controller
 
             // 02. create user credential details
             $userCredData = $this->_setUserCredentialPostData($userDetails['id'], $requestParams['reference_number']);
-            $userCredDetails = $this->userRepo->createUserCredentialDetails($userCredData);
+            $this->userRepo->createUserCredentialDetails($userCredData);
 
             // 03. create main proposal details
             $proposalData = $this->_setMainProposalPostData($userDetails['id'], $requestParams['reference_number'], $requestParams['main_details']);
@@ -107,11 +111,17 @@ class ProposalController extends Controller
                 $this->proposalRepo->createGalleryDetails($galleryData);
             }
 
+            // commit the transaction
+            DB::commit();
+
+            // return success response
             $returnData = [];
             $returnData['proposal_id'] = $requestParams['proposal_id'];
             $returnData['reference_number'] = $requestParams['reference_number'];
             return $this->apiResponse($returnData, 200, true, 'proposal created successfully');
         } catch (Exception $e) {
+            // rollback the transaction on error
+            DB::rollBack();
             return $this->apiResponse([], 400, false, $e->getMessage());
         }
     }
