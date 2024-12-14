@@ -11,6 +11,7 @@ class ProposalResources extends JsonResource
     public function toArray($request)
     {
         return [
+            'id' => $this->id,
             'user_id' =>$this->user_id,
             'reference_number' => $this->reference_number,
             'first_name' => $this->first_name,
@@ -24,6 +25,7 @@ class ProposalResources extends JsonResource
             'nationality' => $this->nationality,
             'religion' => $this->religion,
             'cast' => $this->cast,
+            'job' => $this->professionalEducational
         ];
 
     }
