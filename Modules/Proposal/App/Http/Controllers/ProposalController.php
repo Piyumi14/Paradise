@@ -173,9 +173,9 @@ class ProposalController extends Controller
             "email" => $mainDetails['email'],
             "height" => $mainDetails['height'],
             "civil_status" => $mainDetails['civil_status'],
-            "country_id" => $mainDetails['country_id'],
-            "province_id" => $mainDetails['province_id'],
-            "district_id" => $mainDetails['district_id'],
+            "country" => $mainDetails['country'],
+            "province" => $mainDetails['province'],
+            "district" => $mainDetails['district'],
             "area" => $mainDetails['area'],
             "nationality" => $mainDetails['nationality'],
             "religion" => $mainDetails['religion'],
@@ -195,6 +195,7 @@ class ProposalController extends Controller
             "highest_education" => $professionalAndEducationalData['highest_education'],
             "field_of_study" => $professionalAndEducationalData['field_of_study'],
             "institution" => $professionalAndEducationalData['institution'],
+            "other_details" => $professionalAndEducationalData['other_details'],
         ];
     }
 
@@ -232,7 +233,18 @@ class ProposalController extends Controller
             "birth_time" => $horoscopeData['birth_time'],
             "birth_place" => $horoscopeData['birth_place'],
             "lagnaya" => $horoscopeData['lagnaya'],
-            "horoscope_details" => $horoscopeData['horoscope_details'],
+            "1" => isset($horoscopeData['1']) ? $horoscopeData['1'] : "",
+            "2" => isset($horoscopeData['2']) ? $horoscopeData['2'] : "",
+            "3" => isset($horoscopeData['3']) ? $horoscopeData['3'] : "",
+            "4" => isset($horoscopeData['4']) ? $horoscopeData['4'] : "",
+            "5" => isset($horoscopeData['5']) ? $horoscopeData['5'] : "",
+            "6" => isset($horoscopeData['6']) ? $horoscopeData['6'] : "",
+            "7" => isset($horoscopeData['7']) ? $horoscopeData['7'] : "",
+            "8" => isset($horoscopeData['8']) ? $horoscopeData['8'] : "",
+            "9" => isset($horoscopeData['9']) ? $horoscopeData['9'] : "",
+            "10" => isset($horoscopeData['10']) ? $horoscopeData['10'] : "",
+            "11" => isset($horoscopeData['11']) ? $horoscopeData['11'] : "",
+            "12" => isset($horoscopeData['12']) ? $horoscopeData['12'] : "",
         ];
     }
 

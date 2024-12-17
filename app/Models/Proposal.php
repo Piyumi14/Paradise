@@ -21,9 +21,9 @@ class Proposal extends Model
         'email',
         'height',
         'civil_status',
-        'country_id',
-        'province_id',
-        'district_id',
+        'country',
+        'province',
+        'district',
         'area',
         'nationality',
         'religion',
@@ -34,21 +34,6 @@ class Proposal extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function country()
-    {
-        return $this->belongsTo(Country::class);
-    }
-
-    public function province()
-    {
-        return $this->belongsTo(Province::class);
-    }
-
-    public function district()
-    {
-        return $this->belongsTo(District::class);
     }
 
     public function professionalEducational()

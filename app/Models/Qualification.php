@@ -18,7 +18,8 @@ class Qualification extends Model
         'salary_range',
         'highest_education',
         'field_of_study',
-        'institution'
+        'institution',
+        'other_details'
     ];
 
     public function proposal()
