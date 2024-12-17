@@ -109,4 +109,12 @@ class ProposalRepository extends MainRepository implements ProposalRepositoryInt
 
         return false;
     }
+
+    //get latest reference 
+    public function getLatestReference()
+    {
+        return Proposal::select('reference_number')
+            ->latest('id')
+            ->value('reference_number');
+    }
 }

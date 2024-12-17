@@ -79,11 +79,13 @@ class ProposalController extends Controller
             $userDetails = $this->userRepo->createUserDetails($userData);
 
             // 02. create user credential details
-            $userCredData = $this->_setUserCredentialPostData($userDetails['id'], $requestParams['reference_number']);
+            $latestReference = $this->proposalRepo->getLatestReference();
+            $newReference = $this->_createNewReference($latestReference); // create a new reference number
+            $userCredData = $this->_setUserCredentialPostData($userDetails['id'], $newReference);
             $this->userRepo->createUserCredentialDetails($userCredData);
 
             // 03. create main proposal details
-            $proposalData = $this->_setMainProposalPostData($userDetails['id'], $requestParams['reference_number'], $requestParams['main_details']);
+            $proposalData = $this->_setMainProposalPostData($userDetails['id'], $newReference, $requestParams['main_details']);
             $proposalDetails = $this->proposalRepo->createMainProposalDetails($proposalData);
             $requestParams['proposal_id'] = $proposalDetails['id'];
 
@@ -117,7 +119,7 @@ class ProposalController extends Controller
             // return success response
             $returnData = [];
             $returnData['proposal_id'] = $requestParams['proposal_id'];
-            $returnData['reference_number'] = $requestParams['reference_number'];
+            $returnData['reference_number'] = $newReference;
             return $this->apiResponse($returnData, 200, true, 'proposal created successfully');
         } catch (Exception $e) {
             // rollback the transaction on error
@@ -137,6 +139,20 @@ class ProposalController extends Controller
             "status" => 0
         ];
     }
+
+    //create new reference number
+    private function _createNewReference($latestReference)
+    {
+        if (!$latestReference) {
+            return 'PREF000001';
+        }
+
+        $numericPart = (int) filter_var($latestReference, FILTER_SANITIZE_NUMBER_INT);
+        $newNumericPart = $numericPart + 1;
+        $newReference = 'PREF' . str_pad($newNumericPart, 6, '0', STR_PAD_LEFT);
+        return $newReference;
+    }
+
 
     private function _setUserCredentialPostData($userId, $referenceNumber)
     {

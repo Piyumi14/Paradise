@@ -14,4 +14,5 @@ interface ProposalRepositoryInterface extends MainRepositoryInterface
     public function createGalleryDetails(array $requestParams);
     public function getProposalById($proposalId);
     public function approveProposalById($proposalId);
+    public function getLatestReference();
 }
