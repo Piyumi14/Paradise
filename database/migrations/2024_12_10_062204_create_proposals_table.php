@@ -22,9 +22,9 @@ class CreateProposalsTable extends Migration
             $table->string('email', 100);
             $table->string('height', 10)->nullable();
             $table->enum('civil_status', ['Single', 'Divorced', 'Widowed', 'Engaged', 'Separated']);
-            $table->foreignId('country_id')->constrained('countries')->default(1);
-            $table->foreignId('province_id')->constrained('provinces');
-            $table->foreignId('district_id')->constrained('districts');
+            $table->string('country', 100);
+            $table->string('province', 100);
+            $table->string('district', 100);
             $table->string('area', 100);
             $table->enum('nationality', ['Sri Lankan', 'Other']);
             $table->enum('religion', ['Buddhism', 'Christianity', 'Hinduism', 'Islam', 'Other']);

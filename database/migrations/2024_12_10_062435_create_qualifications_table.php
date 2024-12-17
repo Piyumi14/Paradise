@@ -18,6 +18,7 @@ class CreateQualificationsTable extends Migration
             $table->enum('highest_education', ['High School', 'Bachelor’s Degree', 'Master’s Degree', 'Doctorate', 'Other'])->nullable();
             $table->string('field_of_study', 200)->nullable();
             $table->string('institution', 200)->nullable();
+            $table->text('other_details')->nullable();
             $table->timestamps();
 
             $table->foreign('proposal_id')->references('id')->on('proposals')->cascadeOnDelete();
@@ -29,4 +30,3 @@ class CreateQualificationsTable extends Migration
         Schema::dropIfExists('qualifications');
     }
 }
-
