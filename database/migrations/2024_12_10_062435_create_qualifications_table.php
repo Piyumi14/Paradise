@@ -12,10 +12,10 @@ class CreateQualificationsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('proposal_id');
             $table->string('occupation', 200)->nullable();
-            $table->enum('industry', ['IT', 'Healthcare', 'Engineering', 'Education', 'Finance', 'Government', 'Other'])->nullable();
+            $table->string('industry', 100)->nullable();
             $table->string('company', 200)->nullable();
             $table->string('salary_range', 50)->nullable();
-            $table->enum('highest_education', ['High School', 'Bachelor’s Degree', 'Master’s Degree', 'Doctorate', 'Other'])->nullable();
+            $table->string('highest_education', 100)->nullable();
             $table->string('field_of_study', 200)->nullable();
             $table->string('institution', 200)->nullable();
             $table->text('other_details')->nullable();
