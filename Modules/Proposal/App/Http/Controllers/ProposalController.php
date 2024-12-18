@@ -7,11 +7,11 @@ use Modules\User\App\Contracts\UserRepositoryInterface;
 use Modules\Proposal\App\Http\Resources\ProposalResourcesCollection;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Jobs\UserNotifyEmailJob;
 use Exception;
 use Ramsey\Uuid\Uuid;
 use App\Services\SMSService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ProposalController extends Controller
 {
@@ -108,7 +108,9 @@ class ProposalController extends Controller
             $this->proposalRepo->createHoroscopeDetails($horoscopeData);
 
             // 08. create gallery details
-            foreach ($requestParams['gallery'] as $gallery) {
+            $image = $this->_saveImage($requestParams['gallery']);
+
+            foreach ($image as $gallery) {
                 $galleryData = $this->_setGalleryPostData($requestParams['proposal_id'], $gallery);
                 $this->proposalRepo->createGalleryDetails($galleryData);
             }
@@ -245,9 +247,9 @@ class ProposalController extends Controller
     {
         return  [
             "proposal_id" => $proposalId,
-            "birth_date" => $horoscopeData['birth_date'],
-            "birth_time" => $horoscopeData['birth_time'],
-            "birth_place" => $horoscopeData['birth_place'],
+            "birth_date" => $horoscopeData['birthDate'],
+            "birth_time" => $horoscopeData['birthTime'],
+            "birth_place" => $horoscopeData['birthPlace'],
             "lagnaya" => $horoscopeData['lagnaya'],
             "1" => isset($horoscopeData['1']) ? $horoscopeData['1'] : "",
             "2" => isset($horoscopeData['2']) ? $horoscopeData['2'] : "",
@@ -268,7 +270,7 @@ class ProposalController extends Controller
     {
         return  [
             "proposal_id" => $proposalId,
-            "image_url" => $galleryData['image_url'],
+            "image_url" => $galleryData['path'],
             "is_main_photo" => $galleryData['is_main_photo'],
         ];
     }
@@ -306,5 +308,28 @@ class ProposalController extends Controller
             'message' => 'Hello! This message is generated from Paradise.lk'
         ];
         return sendSMS($requestParams);
+    }
+
+    // save image to local storage
+    private function _saveImage($request)
+    {
+        $savedImages = [];
+
+        foreach ($request as $image) {
+            if (!empty($image['image_url'])) {
+                $file = $image['image_url'];
+
+                if ($file instanceof \Illuminate\Http\UploadedFile && $file->isValid()) {
+                    $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
+                    $path = $file->storeAs('public/images', $fileName);
+                    $savedImages[] = [
+                        'path' => $path,
+                        'is_main_photo' => $image['is_main_photo'],
+                    ];
+                }
+            }
+        }
+
+        return $savedImages;
     }
 }
