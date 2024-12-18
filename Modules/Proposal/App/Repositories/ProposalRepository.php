@@ -89,7 +89,7 @@ class ProposalRepository extends MainRepository implements ProposalRepositoryInt
     {
         return Proposal::select('*')
             ->where('id', $proposalId)
-            ->with('country', 'province', 'district', 'professionalEducational', 'parents', 'siblings', 'horoscope', 'gallery')
+            ->with('professionalEducational', 'parents', 'siblings', 'horoscope', 'gallery')
             ->first();
     }
 
