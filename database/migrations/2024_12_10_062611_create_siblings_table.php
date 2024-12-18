@@ -11,8 +11,8 @@ class CreateSiblingsTable extends Migration
         Schema::create('siblings', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('proposal_id');
-            $table->enum('sibling_type', ['Elder Brother', 'Younger Brother', 'Elder Sister', 'Younger Sister', 'Twin Sister', 'Twin Brother']);
-            $table->enum('civil_status', ['Single', 'Married', 'Divorced', 'Widowed']);
+            $table->string('sibling_type', 100);
+            $table->string('civil_status', 100);
             $table->timestamps();
 
             $table->foreign('proposal_id')->references('id')->on('proposals')->cascadeOnDelete();

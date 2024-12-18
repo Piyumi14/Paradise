@@ -7,10 +7,11 @@ use Modules\User\App\Contracts\UserRepositoryInterface;
 use Modules\Proposal\App\Http\Resources\ProposalResourcesCollection;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Jobs\UserNotifyEmailJob;
 use Exception;
 use Ramsey\Uuid\Uuid;
 use App\Services\SMSService;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ProposalController extends Controller
 {
@@ -68,18 +69,23 @@ class ProposalController extends Controller
     public function createProposal(Request $request)
     {
         try {
-            $requestParams = ($request->all());
+            $requestParams = $request->all();
+
+            // begin a transaction
+            DB::beginTransaction();
 
             // 01. create user details
             $userData = $this->_setUserPostData($requestParams['main_details']);
             $userDetails = $this->userRepo->createUserDetails($userData);
 
             // 02. create user credential details
-            $userCredData = $this->_setUserCredentialPostData($userDetails['id'], $requestParams['reference_number']);
-            $userCredDetails = $this->userRepo->createUserCredentialDetails($userCredData);
+            $latestReference = $this->proposalRepo->getLatestReference();
+            $newReference = $this->_createNewReference($latestReference); // create a new reference number
+            $userCredData = $this->_setUserCredentialPostData($userDetails['id'], $newReference);
+            $this->userRepo->createUserCredentialDetails($userCredData);
 
             // 03. create main proposal details
-            $proposalData = $this->_setMainProposalPostData($userDetails['id'], $requestParams['reference_number'], $requestParams['main_details']);
+            $proposalData = $this->_setMainProposalPostData($userDetails['id'], $newReference, $requestParams['main_details']);
             $proposalDetails = $this->proposalRepo->createMainProposalDetails($proposalData);
             $requestParams['proposal_id'] = $proposalDetails['id'];
 
@@ -102,16 +108,24 @@ class ProposalController extends Controller
             $this->proposalRepo->createHoroscopeDetails($horoscopeData);
 
             // 08. create gallery details
-            foreach ($requestParams['gallery'] as $gallery) {
+            $image = $this->_saveImage($requestParams['gallery']);
+
+            foreach ($image as $gallery) {
                 $galleryData = $this->_setGalleryPostData($requestParams['proposal_id'], $gallery);
                 $this->proposalRepo->createGalleryDetails($galleryData);
             }
 
+            // commit the transaction
+            DB::commit();
+
+            // return success response
             $returnData = [];
             $returnData['proposal_id'] = $requestParams['proposal_id'];
-            $returnData['reference_number'] = $requestParams['reference_number'];
+            $returnData['reference_number'] = $newReference;
             return $this->apiResponse($returnData, 200, true, 'proposal created successfully');
         } catch (Exception $e) {
+            // rollback the transaction on error
+            DB::rollBack();
             return $this->apiResponse([], 400, false, $e->getMessage());
         }
     }
@@ -127,6 +141,20 @@ class ProposalController extends Controller
             "status" => 0
         ];
     }
+
+    //create new reference number
+    private function _createNewReference($latestReference)
+    {
+        if (!$latestReference) {
+            return 'PREF000001';
+        }
+
+        $numericPart = (int) filter_var($latestReference, FILTER_SANITIZE_NUMBER_INT);
+        $newNumericPart = $numericPart + 1;
+        $newReference = 'PREF' . str_pad($newNumericPart, 6, '0', STR_PAD_LEFT);
+        return $newReference;
+    }
+
 
     private function _setUserCredentialPostData($userId, $referenceNumber)
     {
@@ -163,9 +191,9 @@ class ProposalController extends Controller
             "email" => $mainDetails['email'],
             "height" => $mainDetails['height'],
             "civil_status" => $mainDetails['civil_status'],
-            "country_id" => $mainDetails['country_id'],
-            "province_id" => $mainDetails['province_id'],
-            "district_id" => $mainDetails['district_id'],
+            "country" => $mainDetails['country'],
+            "province" => $mainDetails['province'],
+            "district" => $mainDetails['district'],
             "area" => $mainDetails['area'],
             "nationality" => $mainDetails['nationality'],
             "religion" => $mainDetails['religion'],
@@ -185,6 +213,7 @@ class ProposalController extends Controller
             "highest_education" => $professionalAndEducationalData['highest_education'],
             "field_of_study" => $professionalAndEducationalData['field_of_study'],
             "institution" => $professionalAndEducationalData['institution'],
+            "other_details" => $professionalAndEducationalData['other_details'],
         ];
     }
 
@@ -218,19 +247,32 @@ class ProposalController extends Controller
     {
         return  [
             "proposal_id" => $proposalId,
-            "birth_date" => $horoscopeData['birth_date'],
-            "birth_time" => $horoscopeData['birth_time'],
-            "birth_place" => $horoscopeData['birth_place'],
+            "birth_date" => $horoscopeData['birthDate'],
+            "birth_time" => $horoscopeData['birthTime'],
+            "birth_place" => $horoscopeData['birthPlace'],
             "lagnaya" => $horoscopeData['lagnaya'],
-            "horoscope_details" => $horoscopeData['horoscope_details'],
+            "1" => isset($horoscopeData['1']) ? $horoscopeData['1'] : "",
+            "2" => isset($horoscopeData['2']) ? $horoscopeData['2'] : "",
+            "3" => isset($horoscopeData['3']) ? $horoscopeData['3'] : "",
+            "4" => isset($horoscopeData['4']) ? $horoscopeData['4'] : "",
+            "5" => isset($horoscopeData['5']) ? $horoscopeData['5'] : "",
+            "6" => isset($horoscopeData['6']) ? $horoscopeData['6'] : "",
+            "7" => isset($horoscopeData['7']) ? $horoscopeData['7'] : "",
+            "8" => isset($horoscopeData['8']) ? $horoscopeData['8'] : "",
+            "9" => isset($horoscopeData['9']) ? $horoscopeData['9'] : "",
+            "10" => isset($horoscopeData['10']) ? $horoscopeData['10'] : "",
+            "11" => isset($horoscopeData['11']) ? $horoscopeData['11'] : "",
+            "12" => isset($horoscopeData['12']) ? $horoscopeData['12'] : "",
         ];
     }
 
     private function _setGalleryPostData($proposalId, $galleryData)
     {
+        $filename = basename($galleryData['path']);
+
         return  [
             "proposal_id" => $proposalId,
-            "image_url" => $galleryData['image_url'],
+            "image_url" => $filename,
             "is_main_photo" => $galleryData['is_main_photo'],
         ];
     }
@@ -268,5 +310,28 @@ class ProposalController extends Controller
             'message' => 'Hello! This message is generated from Paradise.lk'
         ];
         return sendSMS($requestParams);
+    }
+
+    // save image to local storage
+    private function _saveImage($request)
+    {
+        $savedImages = [];
+
+        foreach ($request as $image) {
+            if (!empty($image['image_url'])) {
+                $file = $image['image_url'];
+
+                if ($file instanceof \Illuminate\Http\UploadedFile && $file->isValid()) {
+                    $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
+                    $path = $file->storeAs('public/images', $fileName);
+                    $savedImages[] = [
+                        'path' => $path,
+                        'is_main_photo' => $image['is_main_photo'],
+                    ];
+                }
+            }
+        }
+
+        return $savedImages;
     }
 }

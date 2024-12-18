@@ -11,11 +11,22 @@ class CreateHoroscopesTable extends Migration
         Schema::create('horoscopes', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('proposal_id');
-            $table->date('birth_date')->nullable();
-            $table->time('birth_time')->nullable();
+            $table->string('birth_date', 100)->nullable();
+            $table->string('birth_time', 100)->nullable();
             $table->string('birth_place', 100)->nullable();
-            $table->enum('lagnaya', ['Mesha', 'Wrushamba', 'Mithuna', 'Kataka', 'Sinha', 'Kanya', 'Thula', 'Wrushika', 'Dhanu', 'Makara', 'Kumba', 'Meena']);
-            $table->text('horoscope_details')->nullable();
+            $table->string('lagnaya', 50)->nullable();
+            $table->string('1', 50)->nullable();
+            $table->string('2', 50)->nullable();
+            $table->string('3', 50)->nullable();
+            $table->string('4', 50)->nullable();
+            $table->string('5', 50)->nullable();
+            $table->string('6', 50)->nullable();
+            $table->string('7', 50)->nullable();
+            $table->string('8', 50)->nullable();
+            $table->string('9', 50)->nullable();
+            $table->string('10', 50)->nullable();
+            $table->string('11', 50)->nullable();
+            $table->string('12', 50)->nullable();
             $table->timestamps();
 
             $table->foreign('proposal_id')->references('id')->on('proposals')->cascadeOnDelete();

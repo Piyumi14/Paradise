@@ -89,7 +89,7 @@ class ProposalRepository extends MainRepository implements ProposalRepositoryInt
     {
         return Proposal::select('*')
             ->where('id', $proposalId)
-            ->with('country', 'province', 'district', 'professionalEducational', 'parents', 'siblings', 'horoscope', 'gallery')
+            ->with('professionalEducational', 'parents', 'siblings', 'horoscope', 'gallery')
             ->first();
     }
 
@@ -108,5 +108,13 @@ class ProposalRepository extends MainRepository implements ProposalRepositoryInt
         }
 
         return false;
+    }
+
+    //get latest reference 
+    public function getLatestReference()
+    {
+        return Proposal::select('reference_number')
+            ->latest('id')
+            ->value('reference_number');
     }
 }
