@@ -268,9 +268,11 @@ class ProposalController extends Controller
 
     private function _setGalleryPostData($proposalId, $galleryData)
     {
+        $filename = basename($galleryData['path']);
+
         return  [
             "proposal_id" => $proposalId,
-            "image_url" => $galleryData['path'],
+            "image_url" => $filename,
             "is_main_photo" => $galleryData['is_main_photo'],
         ];
     }
