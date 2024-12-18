@@ -133,7 +133,7 @@ class ProposalController extends Controller
 
         return [
             "user_id" => $userId,
-            "username" => $referenceNumber,
+            "user_name" => $referenceNumber,
             "password" => $this->_generateRandomPassword()
         ];
     }
