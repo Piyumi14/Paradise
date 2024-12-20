@@ -284,9 +284,10 @@ class ProposalController extends Controller
 
     private function _setPaymentPostData($proposalId, $paymentReceipt)
     {
+        $receipt = basename($paymentReceipt['receipt']);
         return [
             "proposal_id" => $proposalId,
-            "receipt" => $paymentReceipt[0]['receipt'],
+            "receipt" => $receipt,
             "reference" => $paymentReceipt[0]['reference']
         ];
     }

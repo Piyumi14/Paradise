@@ -60,4 +60,9 @@ class Proposal extends Model
     {
         return $this->hasMany(Photo::class);
     }
+
+    public function payment()
+    {
+        return $this->hasone(Payments::class);
+    }
 }
