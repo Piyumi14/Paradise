@@ -30,7 +30,7 @@ class ProposalResources extends JsonResource
                 return [
                     'id' => $image->id,
                     'proposal_id' => $image->proposal_id,
-                    'image_url' => url('storage/images/' . $image->image_url), // Converts to http://localhost:8000/public/images/6762725031faa.jpg
+                    'image_url' => url('storage/images/profile/' . $image->image_url), // Converts to http://localhost:8000/public/images/6762725031faa.jpg
                     'is_main_photo' => $image->is_main_photo,
                 ];
             }),

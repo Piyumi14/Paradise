@@ -5,6 +5,7 @@ namespace Modules\Proposal\App\Repositories;
 use App\Models\Gallery;
 use App\Models\Horoscope;
 use App\Models\Parents;
+use App\Models\Payments;
 use App\Models\Photo;
 use App\Models\ProfessionalEducational;
 use Modules\Proposal\App\Contracts\ProposalRepositoryInterface;
@@ -83,6 +84,10 @@ class ProposalRepository extends MainRepository implements ProposalRepositoryInt
     public function createGalleryDetails(array $requestParams)
     {
         return Photo::create($requestParams);
+    }
+    public function createPayamentDetails(array $requestParams)
+    {
+        return Payments::create($requestParams);
     }
 
     public function getProposalById($proposalId)

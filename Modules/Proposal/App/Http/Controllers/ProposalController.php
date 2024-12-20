@@ -108,12 +108,17 @@ class ProposalController extends Controller
             $this->proposalRepo->createHoroscopeDetails($horoscopeData);
 
             // 08. create gallery details
-            $image = $this->_saveImage($requestParams['gallery']);
+            $image = $this->_saveProfileImages($requestParams['gallery']);
 
             foreach ($image as $gallery) {
                 $galleryData = $this->_setGalleryPostData($requestParams['proposal_id'], $gallery);
                 $this->proposalRepo->createGalleryDetails($galleryData);
             }
+
+            // 09. create payment details
+            $paymentReceipt = $this->_savePaymentImage($requestParams['payment']);
+            $paymentData = $this->_setPaymentPostData($requestParams['proposal_id'], $paymentReceipt);
+            $this->proposalRepo->createPayamentDetails($paymentData);
 
             // commit the transaction
             DB::commit();
@@ -277,6 +282,15 @@ class ProposalController extends Controller
         ];
     }
 
+    private function _setPaymentPostData($proposalId, $paymentReceipt)
+    {
+        return [
+            "proposal_id" => $proposalId,
+            "receipt" => $paymentReceipt[0]['receipt'],
+            "reference" => $paymentReceipt[0]['reference']
+        ];
+    }
+
     //get proposal details by id
     public function getProposalById($proposalId)
     {
@@ -312,8 +326,8 @@ class ProposalController extends Controller
         return sendSMS($requestParams);
     }
 
-    // save image to local storage
-    private function _saveImage($request)
+    // save profile images to local storage
+    private function _saveProfileImages($request)
     {
         $savedImages = [];
 
@@ -323,10 +337,33 @@ class ProposalController extends Controller
 
                 if ($file instanceof \Illuminate\Http\UploadedFile && $file->isValid()) {
                     $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
-                    $path = $file->storeAs('public/images', $fileName);
+                    $path = $file->storeAs('public/images/profile', $fileName);
                     $savedImages[] = [
                         'path' => $path,
                         'is_main_photo' => $image['is_main_photo'],
+                    ];
+                }
+            }
+        }
+
+        return $savedImages;
+    }
+
+    // save payment receipt to local storage
+    private function _savePaymentImage($request)
+    {
+        $savedImages = [];
+
+        foreach ($request as $image) {
+            if (!empty($image['receipt'])) {
+                $file = $image['receipt'];
+
+                if ($file instanceof \Illuminate\Http\UploadedFile && $file->isValid()) {
+                    $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
+                    $path = $file->storeAs('public/images/payment', $fileName);
+                    $savedImages[] = [
+                        'receipt' => $path,
+                        'reference' => $image['reference'],
                     ];
                 }
             }
