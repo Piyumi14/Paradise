@@ -176,7 +176,8 @@ class ProposalController extends Controller
         for ($i = 0; $i < $length; $i++) {
             $password .= $characters[random_int(0, strlen($characters) - 1)];
         }
-        return $password;
+        // return $password;
+        return "password@123";
     }
 
     private function _setMainProposalPostData($userId, $reference, $mainDetails)

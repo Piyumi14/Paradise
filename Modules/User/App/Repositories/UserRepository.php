@@ -30,15 +30,18 @@ class UserRepository extends MainRepository implements UserRepositoryInterface
         return 'App\Models\User';
     }
 
-    public function createUserDetails(array $requestParams){
+    public function createUserDetails(array $requestParams)
+    {
         return User::create($requestParams);
     }
 
-    public function createUserCredentialDetails(array $requestParams){
+    public function createUserCredentialDetails(array $requestParams)
+    {
         return UserCredential::create($requestParams);
     }
 
-    public function registerUser(array $requestParams){
+    public function registerUser(array $requestParams)
+    {
         // Validate the incoming request data
         $validator = Validator::make($requestParams, [
             'user_name' => 'required|string|max:100|unique:user_credentials', // Validate username as unique
@@ -99,5 +102,4 @@ class UserRepository extends MainRepository implements UserRepositoryInterface
             ], 500);
         }
     }
-
 }
