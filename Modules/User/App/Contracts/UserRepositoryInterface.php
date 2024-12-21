@@ -7,5 +7,6 @@ interface UserRepositoryInterface extends MainRepositoryInterface
 {
     public function createUserDetails(array $requestParams);
     public function createUserCredentialDetails(array $requestParams);
+    public function registerUser(array $requestParams);
 
 }

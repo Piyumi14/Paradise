@@ -74,18 +74,16 @@ class ProposalController extends Controller
             // begin a transaction
             DB::beginTransaction();
 
-            // 01. create user details
-            $userData = $this->_setUserPostData($requestParams['main_details']);
-            $userDetails = $this->userRepo->createUserDetails($userData);
-
-            // 02. create user credential details
-            $latestReference = $this->proposalRepo->getLatestReference();
+            // 01. create proposal reference number
+            $latestReference = $this->proposalRepo->getLatestReference(); // get the latest reference number
             $newReference = $this->_createNewReference($latestReference); // create a new reference number
-            $userCredData = $this->_setUserCredentialPostData($userDetails['id'], $newReference);
-            $this->userRepo->createUserCredentialDetails($userCredData);
+
+            // 02. register user and create user credential details
+            $userData = $this->_setUserPostData($requestParams['main_details'], $newReference);
+            $userDetails = $this->userRepo->registerUser($userData);
 
             // 03. create main proposal details
-            $proposalData = $this->_setMainProposalPostData($userDetails['id'], $newReference, $requestParams['main_details']);
+            $proposalData = $this->_setMainProposalPostData($userDetails->original['user']['id'], $newReference, $requestParams['main_details']);
             $proposalDetails = $this->proposalRepo->createMainProposalDetails($proposalData);
             $requestParams['proposal_id'] = $proposalDetails['id'];
 
@@ -135,15 +133,15 @@ class ProposalController extends Controller
         }
     }
 
-    private function _setUserPostData($mainDetails)
+    private function _setUserPostData($mainDetails, $newReference)
     {
         return [
-            "user_uuid" =>  Uuid::uuid4()->toString(),
+            "user_name" => $newReference,
+            "password" => $this->_generateRandomPassword(),
             "first_name" => $mainDetails['first_name'],
             "last_name" => $mainDetails['last_name'],
             "email" => $mainDetails['email'],
             "phone_number" => $mainDetails['phone_number'],
-            "status" => 0
         ];
     }
 
