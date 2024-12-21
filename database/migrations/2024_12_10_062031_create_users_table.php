@@ -14,7 +14,7 @@ class CreateUsersTable extends Migration
             $table->string('first_name', 100);
             $table->string('last_name', 100);
             $table->string('email', 100)->unique();
-            $table->bigInteger('phone_number');
+            $table->srting('phone_number', 100);
             $table->boolean('status')->default(0);
             $table->timestamps();
         });

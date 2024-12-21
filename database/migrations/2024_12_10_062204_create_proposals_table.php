@@ -18,9 +18,10 @@ class CreateProposalsTable extends Migration
             $table->string('preferred_name', 100);
             $table->integer('age')->nullable();
             $table->enum('gender', ['Male', 'Female']);
-            $table->bigInteger('phone_number');
+            $table->string('phone_number', 100);
             $table->string('email', 100);
-            $table->string('height', 10)->nullable();
+            $table->string('height_f', 10)->nullable();
+            $table->string('height_i', 10)->nullable();
             $table->string('civil_status', 100);
             $table->string('country', 100);
             $table->string('province', 100);
