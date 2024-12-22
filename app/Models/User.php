@@ -21,7 +21,8 @@ class User extends Authenticatable
         'last_name',
         'email',
         'phone_number',
-        'status'
+        'status',
+        'gender'
     ];
 
     public function proposals()

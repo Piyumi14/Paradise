@@ -16,6 +16,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\App;
 use Illuminate\Contracts\Container\Container;
 use App\Repositories\MainRepository;
+use Illuminate\Support\Facades\Auth;
 
 class ProposalRepository extends MainRepository implements ProposalRepositoryInterface
 {
@@ -37,7 +38,8 @@ class ProposalRepository extends MainRepository implements ProposalRepositoryInt
 
     public function getAllProposals($options, $pluck = '')
     {
-        $proposals = Proposal::query()->select("*");
+        $matchingGender = Auth::user()->gender === 'Male' ? "Female" : "Male";
+        $proposals = Proposal::query()->select("*")->where('gender', $matchingGender);
 
         if (!empty($options['sortBy'])) {
             if ($options['sortBy']['column'] == '') {

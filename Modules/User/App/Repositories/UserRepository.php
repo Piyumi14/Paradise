@@ -50,6 +50,7 @@ class UserRepository extends MainRepository implements UserRepositoryInterface
             'email' => 'required|string|email|max:255|unique:users', // Validate email as unique
             'phone_number' => 'required', // Validate phone number 
             'password' => 'required|string', // Validate password 
+            'gender' => 'required|string', // Validate gender 
         ]);
 
         // If validation fails, return a JSON response with errors
@@ -74,6 +75,7 @@ class UserRepository extends MainRepository implements UserRepositoryInterface
                 'last_name' => $validatedData['last_name'],
                 'email' => $validatedData['email'],
                 'phone_number' => $validatedData['phone_number'],
+                'gender' => $validatedData['gender'],
             ]);
 
             // Create the credentials record in the user_credentials table

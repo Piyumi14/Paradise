@@ -18,14 +18,15 @@ use Illuminate\Support\Facades\Route;
 //     Route::get('proposal', fn (Request $request) => $request->user())->name('proposal');
 // });
 
+Route::middleware('auth:api')->group(function () {
+    Route::prefix('proposal')->group(function () {
+        Route::get('get-all', 'ProposalController@getAllProposals');
+        Route::get('get-by-id/{id}', 'ProposalController@getProposalById');
+        Route::post('create', 'ProposalController@createProposal');
+        Route::get('edit/{id}', 'ProposalController@editProposal');
+        Route::post('approve/{id}', 'ProposalController@approveProposal');
 
-Route::prefix('proposal')->group(function () {
-    Route::get('get-all', 'ProposalController@getAllProposals');
-    Route::get('get-by-id/{id}', 'ProposalController@getProposalById');
-    Route::post('create', 'ProposalController@createProposal');
-    Route::get('edit/{id}', 'ProposalController@editProposal');
-    Route::post('approve/{id}', 'ProposalController@approveProposal');
-
-    Route::post('send-email', 'ProposalController@sendEmail');
-    Route::post('send-sms', 'ProposalController@sendSMS');
+        Route::post('send-email', 'ProposalController@sendEmail');
+        Route::post('send-sms', 'ProposalController@sendSMS');
+    });
 });
