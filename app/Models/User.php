@@ -40,11 +40,6 @@ class User extends Authenticatable
         return $this->hasMany(Message::class, 'receiver_id');
     }
 
-    public function interests()
-    {
-        return $this->hasMany(Interest::class);
-    }
-
     public function invitationsSent()
     {
         return $this->hasMany(Invitation::class, 'sender_id');
