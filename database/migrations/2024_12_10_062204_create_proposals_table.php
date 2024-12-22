@@ -27,6 +27,7 @@ class CreateProposalsTable extends Migration
             $table->string('province', 100);
             $table->string('district', 100);
             $table->string('area', 100);
+            $table->string('address', 200);
             $table->string('nationality', 100);
             $table->string('religion', 100);
             $table->string('cast', 100);

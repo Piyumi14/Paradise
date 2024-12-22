@@ -200,6 +200,7 @@ class ProposalController extends Controller
             "province" => $mainDetails['province'],
             "district" => $mainDetails['district'],
             "area" => $mainDetails['area'],
+            "address" => $mainDetails['address'],
             "nationality" => $mainDetails['nationality'],
             "religion" => $mainDetails['religion'],
             "cast" => $mainDetails['cast'],

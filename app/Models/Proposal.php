@@ -26,6 +26,7 @@ class Proposal extends Model
         'province',
         'district',
         'area',
+        'address',
         'nationality',
         'religion',
         'cast',
