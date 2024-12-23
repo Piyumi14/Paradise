@@ -30,7 +30,8 @@ class Proposal extends Model
         'nationality',
         'religion',
         'cast',
-        'profile_description'
+        'profile_description',
+        'nic',
     ];
 
     public function user()

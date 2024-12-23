@@ -200,6 +200,7 @@ class ProposalController extends Controller
             "last_name" => $mainDetails['last_name'],
             "preferred_name" => $mainDetails['preferred_name'],
             "age" => $mainDetails['age'],
+            "nic" => $mainDetails['nic'],
             "gender" => $mainDetails['gender'],
             "phone_number" => $mainDetails['phone_number'],
             "email" => $mainDetails['email'],
