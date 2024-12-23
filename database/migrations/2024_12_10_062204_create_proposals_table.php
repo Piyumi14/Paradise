@@ -15,7 +15,7 @@ class CreateProposalsTable extends Migration
             $table->string('first_name', 100);
             $table->string('middle_name', 100)->nullable();
             $table->string('last_name', 100);
-            $table->string('preferred_name', 100);
+            $table->string('preferred_name', 100)->nullable();
             $table->integer('age')->nullable();
             $table->enum('gender', ['Male', 'Female']);
             $table->string('phone_number', 100);
@@ -24,10 +24,10 @@ class CreateProposalsTable extends Migration
             $table->string('height_i', 10)->nullable();
             $table->string('civil_status', 100);
             $table->string('country', 100);
-            $table->string('province', 100);
-            $table->string('district', 100);
-            $table->string('area', 100);
-            $table->string('address', 200);
+            $table->string('province', 100)->nullable();
+            $table->string('district', 100)->nullable();
+            $table->string('area', 100)->nullable();
+            $table->string('address', 200)->nullable();
             $table->string('nationality', 100);
             $table->string('religion', 100);
             $table->string('cast', 100);

@@ -11,7 +11,7 @@ class CreatePhotosTable extends Migration
         Schema::create('photos', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('proposal_id');
-            $table->string('image_url', 255);
+            $table->string('image_url', 255)->nullable();
             $table->boolean('is_main_photo')->default(false);
             $table->timestamps();
 
