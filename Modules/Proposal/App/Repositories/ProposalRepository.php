@@ -137,7 +137,7 @@ class ProposalRepository extends MainRepository implements ProposalRepositoryInt
                     } catch (Exception $e) {
                         Log::error("Failed to send email to: {$proposal['email']}", ['error' => $e->getMessage()]);
                     }
-    
+
                     try {
                         $smsData = [
                             'phone_number' => $proposal['phone_number'],
@@ -149,7 +149,7 @@ class ProposalRepository extends MainRepository implements ProposalRepositoryInt
                         Log::error("Failed to send SMS to: {$proposal['phone_number']}", ['error' => $e->getMessage()]);
                     }
                 }
-                
+
                 return $proposal;
             }
 
@@ -166,5 +166,14 @@ class ProposalRepository extends MainRepository implements ProposalRepositoryInt
         return Proposal::select('reference_number')
             ->latest('id')
             ->value('reference_number');
+    }
+
+    //get proposals for admin 
+    public function getAllProposalsForAdmin()
+    {
+        return Proposal::select('*')
+            ->with('payment')
+            ->orderBy('created_at', 'desc')
+            ->get();
     }
 }

@@ -397,4 +397,11 @@ class ProposalController extends Controller
 
         return $savedImages;
     }
+
+    //get all proposals for admin
+    public function getAllProposalsForAdmin()
+    {
+        $proposals = $this->proposalRepo->getAllProposalsForAdmin();
+        return $this->apiResponse($proposals, $this->response_status_code, true);
+    }
 }

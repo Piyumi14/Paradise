@@ -28,5 +28,7 @@ Route::middleware('auth:api')->group(function () {
 
         Route::post('send-email', 'ProposalController@sendEmail');
         Route::post('send-sms', 'ProposalController@sendSMS');
+
+        Route::get('get-all-for-admin', 'ProposalController@getAllProposalsForAdmin');
     });
 });
