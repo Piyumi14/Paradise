@@ -106,17 +106,20 @@ class ProposalController extends Controller
             $this->proposalRepo->createHoroscopeDetails($horoscopeData);
 
             // 08. create gallery details
-            $image = $this->_saveProfileImages($requestParams['gallery']);
-
-            foreach ($image as $gallery) {
-                $galleryData = $this->_setGalleryPostData($requestParams['proposal_id'], $gallery);
-                $this->proposalRepo->createGalleryDetails($galleryData);
+            if((isset($requestParams['gallery']))){
+                $image = $this->_saveProfileImages($requestParams['gallery']);
+                foreach ($image as $gallery) {
+                    $galleryData = $this->_setGalleryPostData($requestParams['proposal_id'], $gallery);
+                    $this->proposalRepo->createGalleryDetails($galleryData);
+                }
             }
 
             // 09. create payment details
-            $paymentReceipt = $this->_savePaymentImage($requestParams['payment']);
-            $paymentData = $this->_setPaymentPostData($requestParams['proposal_id'], $paymentReceipt);
-            $this->proposalRepo->createPayamentDetails($paymentData);
+            if(isset($requestParams['payment'])){
+                $paymentReceipt = $this->_savePaymentImage($requestParams['payment']);
+                $paymentData = $this->_setPaymentPostData($requestParams['proposal_id'], $paymentReceipt);
+                $this->proposalRepo->createPayamentDetails($paymentData);
+            }
 
             // 10. send email and sms to admin
             if (env('ENABLE_EMAIL_AND_SMS', true) == true) {
@@ -263,7 +266,7 @@ class ProposalController extends Controller
             "birth_date" => $horoscopeData['birthDate'],
             "birth_time" => $horoscopeData['birthTime'],
             "birth_place" => $horoscopeData['birthPlace'],
-            "lagnaya" => $horoscopeData['lagnaya'],
+            "lagnaya" => isset($horoscopeData['lagnaya']) ? $horoscopeData['lagnaya'] : "",
             "1" => isset($horoscopeData['1']) ? $horoscopeData['1'] : "",
             "2" => isset($horoscopeData['2']) ? $horoscopeData['2'] : "",
             "3" => isset($horoscopeData['3']) ? $horoscopeData['3'] : "",
