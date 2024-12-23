@@ -106,7 +106,7 @@ class ProposalController extends Controller
             $this->proposalRepo->createHoroscopeDetails($horoscopeData);
 
             // 08. create gallery details
-            if((isset($requestParams['gallery']))){
+            if ((isset($requestParams['gallery']))) {
                 $image = $this->_saveProfileImages($requestParams['gallery']);
                 foreach ($image as $gallery) {
                     $galleryData = $this->_setGalleryPostData($requestParams['proposal_id'], $gallery);
@@ -115,11 +115,14 @@ class ProposalController extends Controller
             }
 
             // 09. create payment details
-            if(isset($requestParams['payment'])){
+            if (isset($requestParams['payment'][0])) {
                 $paymentReceipt = $this->_savePaymentImage($requestParams['payment']);
-                $paymentData = $this->_setPaymentPostData($requestParams['proposal_id'], $paymentReceipt);
-                $this->proposalRepo->createPayamentDetails($paymentData);
+            }else{
+                $paymentReceipt = [];
             }
+
+            $paymentData = $this->_setPaymentPostData($requestParams['proposal_id'], $requestParams['payment']['reference'], $paymentReceipt);
+            $this->proposalRepo->createPayamentDetails($paymentData);
 
             // 10. send email and sms to admin
             if (env('ENABLE_EMAIL_AND_SMS', true) == true) {
@@ -294,13 +297,18 @@ class ProposalController extends Controller
         ];
     }
 
-    private function _setPaymentPostData($proposalId, $paymentReceipt)
+    private function _setPaymentPostData($proposalId, $reference, $paymentReceipt)
     {
-        $receipt = basename($paymentReceipt[0]['receipt']);
+        if (isset($paymentReceipt[0]['receipt']) && $paymentReceipt[0]['receipt']) {
+            $receipt = basename($paymentReceipt[0]['receipt']);
+        } else {
+            $receipt = "";
+        }
+
         return [
             "proposal_id" => $proposalId,
-            "receipt" => $receipt,
-            "reference" => $paymentReceipt[0]['reference']
+            "receipt" => $receipt ? $receipt : "null",
+            "reference" => $reference ? $reference : $paymentReceipt[0]['reference']
         ];
     }
 
