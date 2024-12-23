@@ -7,7 +7,7 @@
 
 <body>
     <p>Hello Admin {{ $data['name'] }},</p>
-    <p>This is generated form Paradise.lk to Admin</p>
+    <p>New user has been registered now. Ref number : {{ $data['reference'] }}</p>
 </body>
 
 </html>

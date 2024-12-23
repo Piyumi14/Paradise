@@ -16,7 +16,9 @@ use App\Models\User;
 use Illuminate\Support\Facades\App;
 use Illuminate\Contracts\Container\Container;
 use App\Repositories\MainRepository;
+use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class ProposalRepository extends MainRepository implements ProposalRepositoryInterface
 {
@@ -102,19 +104,60 @@ class ProposalRepository extends MainRepository implements ProposalRepositoryInt
 
     public function approveProposalById($proposalId)
     {
-        // update proposal status into active
-        $proposalUpdated = Proposal::where('id', $proposalId)->update(['status' => 1]);
+        try {
+            // Update proposal status into active
+            $proposalUpdated = Proposal::where('id', $proposalId)->update(['status' => 1]);
 
-        if ($proposalUpdated) {
-            $proposal = Proposal::select('id', 'user_id', 'reference_number')->where('id', $proposalId)->first();
+            if ($proposalUpdated) {
+                $proposal = Proposal::select('id', 'user_id', 'reference_number', 'email', 'first_name', 'last_name', 'phone_number')
+                    ->where('id', $proposalId)
+                    ->first();
 
-            // update user status into active
-            $userUpdated = User::where('id', $proposal['user_id'])->update(['status' => 1]);
+                if (!$proposal) {
+                    throw new Exception("Proposal not found with ID: $proposalId");
+                }
 
-            return $proposal ? $proposal : false;
+                try {
+                    // Update user status into active
+                    User::where('id', $proposal['user_id'])->update(['status' => 1]);
+                } catch (Exception $e) {
+                    Log::error("Failed to update user status for User ID: {$proposal['user_id']}", ['error' => $e->getMessage()]);
+                    return false;
+                }
+
+                if (env('ENABLE_EMAIL_AND_SMS', true) == true) {
+                    try {
+                        $emailData = [
+                            'email' => $proposal['email'],
+                            'name' => $proposal['first_name'] . ' ' . $proposal['last_name'],
+                            'type' => 'User',
+                            'reference' => $proposal['reference_number'],
+                        ];
+                        sendEmail($emailData);
+                    } catch (Exception $e) {
+                        Log::error("Failed to send email to: {$proposal['email']}", ['error' => $e->getMessage()]);
+                    }
+    
+                    try {
+                        $smsData = [
+                            'phone_number' => $proposal['phone_number'],
+                            'message' => 'Your account has been created successfully. Your login details as below. Username is ' . $proposal['reference_number'] . ' and Password is ' . 'password@123',
+                            'type' => 'User',
+                        ];
+                        sendSMS($smsData);
+                    } catch (Exception $e) {
+                        Log::error("Failed to send SMS to: {$proposal['phone_number']}", ['error' => $e->getMessage()]);
+                    }
+                }
+                
+                return $proposal;
+            }
+
+            return false;
+        } catch (Exception $e) {
+            Log::error("Failed to approve proposal with ID: $proposalId", ['error' => $e->getMessage()]);
+            return false;
         }
-
-        return false;
     }
 
     //get latest reference 

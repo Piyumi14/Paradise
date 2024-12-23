@@ -118,6 +118,12 @@ class ProposalController extends Controller
             $paymentData = $this->_setPaymentPostData($requestParams['proposal_id'], $paymentReceipt);
             $this->proposalRepo->createPayamentDetails($paymentData);
 
+            // 10. send email and sms to admin
+            if (env('ENABLE_EMAIL_AND_SMS', true) == true) {
+                $this->sendEmail($requestParams['main_details'], $newReference);
+                $this->sendSMS($newReference);
+            }
+
             // commit the transaction
             DB::commit();
 
@@ -313,18 +319,23 @@ class ProposalController extends Controller
     }
 
     //send email
-    public function sendEmail(Request $request)
+    public function sendEmail($requestParams, $newReference)
     {
-        $requestParams = ($request->all());
+        $requestParams = [
+            'email' => $requestParams['email'],
+            'name' => "Paradise",
+            'type' => 'Admin',
+            'reference' => $newReference,
+        ];
         return sendEmail($requestParams);
     }
 
     //send sms
-    public function sendSMS()
+    public function sendSMS($newReference)
     {
         $requestParams = [
             'phone_number' => '94710197538',
-            'message' => 'Hello! This message is generated from Paradise.lk'
+            'message' => "Hi Admin, New user has been registered now. Ref number: $newReference",
         ];
         return sendSMS($requestParams);
     }

@@ -17,6 +17,7 @@ function sendEmail($requestParams)
     $emailData = [
         'to' => $requestParams['email'],
         'name' => $requestParams['name'],
+        'reference' => $requestParams['reference'],
     ];
 
     if ($requestParams['type'] == 'User') {
