@@ -54,6 +54,11 @@ class InvitationRepository extends MainRepository implements InvitationRepositor
 
     public function getAllReceivedInvitations()
     {
-        return Invitation::where('receiver_id', Auth::user()->id)->get()->toArray();
+        return Invitation::where('receiver_id', Auth::user()->id)
+            ->with(['proposal' => function ($query) {
+                $query->with(['professionalEducational', 'gallery']);
+            }])
+            ->get()
+            ->toArray();
     }
 }
