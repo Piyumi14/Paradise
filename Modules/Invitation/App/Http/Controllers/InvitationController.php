@@ -3,6 +3,7 @@
 namespace Modules\Invitation\App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Proposal;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -29,10 +30,12 @@ class InvitationController extends Controller
 
     private function _setInvitationPostData($requestParams)
     {
+        $senderProposalId = Proposal::select('id')->where('user_id', Auth::user()->id)->first();
         return [
             "sender_id" =>  Auth::user()->id,
             "receiver_id" => $requestParams['user_id'],
-            "proposal_id" => $requestParams['proposal_id'],
+            "sender_proposal_id" => $senderProposalId->id,
+            "receiver_proposal_id" => $requestParams['proposal_id'],
         ];
     }
 

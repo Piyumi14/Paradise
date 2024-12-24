@@ -45,7 +45,7 @@ class InvitationRepository extends MainRepository implements InvitationRepositor
     public function getAllSentInvitations()
     {
         return Invitation::where('sender_id', Auth::user()->id)
-            ->with(['proposal' => function ($query) {
+            ->with(['receiverProposal' => function ($query) {
                 $query->with(['professionalEducational', 'gallery']);
             }])
             ->get()
@@ -55,7 +55,7 @@ class InvitationRepository extends MainRepository implements InvitationRepositor
     public function getAllReceivedInvitations()
     {
         return Invitation::where('receiver_id', Auth::user()->id)
-            ->with(['proposal' => function ($query) {
+            ->with(['senderProposal' => function ($query) {
                 $query->with(['professionalEducational', 'gallery']);
             }])
             ->get()
