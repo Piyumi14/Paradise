@@ -13,6 +13,7 @@ class Invitation extends Model
     protected $fillable = [
         'sender_id',
         'receiver_id',
+        'proposal_id',
         'status'
     ];
 
@@ -24,5 +25,9 @@ class Invitation extends Model
     public function receiver()
     {
         return $this->belongsTo(User::class, 'receiver_id');
+    }
+
+    public function proposal(){
+        return $this->belongsTo(Proposal::class, 'proposal_id');
     }
 }

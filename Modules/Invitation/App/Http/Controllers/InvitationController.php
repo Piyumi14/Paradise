@@ -6,56 +6,63 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Modules\Invitation\App\Contracts\InvitationRepositoryInterface;
 
 class InvitationController extends Controller
 {
     private $invitationRepo;
 
-    public function __construct(InvitationRepositoryInterface $invitationRepo){
+    public function __construct(InvitationRepositoryInterface $invitationRepo)
+    {
         $this->invitationRepo = $invitationRepo;
     }
 
     // send invitation
-    public function sendInvitation(Request $request){
+    public function sendInvitation(Request $request)
+    {
         $requestParams = ($request->all());
         $invitationData = $this->_setInvitationPostData($requestParams);
         $invitationDetails = $this->invitationRepo->createInvitation($invitationData);
         return $this->apiResponse($invitationDetails, 200, true, 'invitation sent successfully');
     }
 
-    private function _setInvitationPostData($requestParams){
+    private function _setInvitationPostData($requestParams)
+    {
         return [
-            "sender_id" =>  1, // logged in user id must be set
+            "sender_id" =>  Auth::user()->id,
             "receiver_id" => $requestParams['user_id'],
+            "proposal_id" => $requestParams['proposal_id'],
         ];
     }
 
     //update snet invitation status
-    public function updateSentInvitationStatus(Request $request){
+    public function updateSentInvitationStatus(Request $request)
+    {
         $requestParams = ($request->all());
         $invitationDetails = $this->invitationRepo->updateSentInvitationStatus($requestParams);
         return $this->apiResponse($invitationDetails, 200, true, 'invitation status updated successfully');
     }
 
     //update received invitation status
-    public function updateReceivedInvitationStatus(Request $request){
+    public function updateReceivedInvitationStatus(Request $request)
+    {
         $requestParams = ($request->all());
         $invitationDetails = $this->invitationRepo->updateReceivedInvitationStatus($requestParams);
         return $this->apiResponse($invitationDetails, 200, true, 'invitation status updated successfully');
     }
 
     //get all sent invitation details
-    public function getAllSentInvitations(){
+    public function getAllSentInvitations()
+    {
         $sentInvitationDetails = $this->invitationRepo->getAllSentInvitations();
         return $this->apiResponse($sentInvitationDetails, 200, true);
     }
-    
+
     //get all received invitation details
-    public function getAllReceivedInvitations(){
+    public function getAllReceivedInvitations()
+    {
         $receviedInvitationDetails = $this->invitationRepo->getAllReceivedInvitations();
         return $this->apiResponse($receviedInvitationDetails, 200, true);
     }
-
-
 }

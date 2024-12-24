@@ -12,11 +12,13 @@ class CreateInvitationsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('sender_id');
             $table->unsignedBigInteger('receiver_id');
+            $table->unsignedBigInteger('proposal_id');
             $table->enum('status', ['Pending', 'Accepted', 'Cancelled'])->default('Pending');
             $table->timestamps();
 
             $table->foreign('sender_id')->references('id')->on('users')->cascadeOnDelete();
             $table->foreign('receiver_id')->references('id')->on('users')->cascadeOnDelete();
+            $table->foreign('proposal_id')->references('id')->on('proposals')->cascadeOnDelete();
         });
     }
 
