@@ -404,4 +404,9 @@ class ProposalController extends Controller
         $proposals = $this->proposalRepo->getAllProposalsForAdmin();
         return $this->apiResponse($proposals, $this->response_status_code, true);
     }
+    
+    public function test()
+    {
+        dd('test');
+    }
 }

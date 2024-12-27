@@ -33,3 +33,4 @@ Route::middleware('auth:api')->group(function () {
 });
 
 Route::post('proposal/create', 'ProposalController@createProposal');
+Route::get('test', 'ProposalController@test');
