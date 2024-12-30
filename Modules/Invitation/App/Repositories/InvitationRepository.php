@@ -61,4 +61,20 @@ class InvitationRepository extends MainRepository implements InvitationRepositor
             ->get()
             ->toArray();
     }
+
+    public function getSendInvitationStatus($proposalId)
+    {
+        return Invitation::select('status')
+        ->where('receiver_proposal_id', $proposalId)
+        ->where('sender_id', Auth::user()->id)
+        ->first();
+    }
+
+    public function getReceivedInvitationStatus($proposalId)
+    {
+        return Invitation::select('status')
+        ->where('sender_proposal_id', $proposalId)
+        ->where('receiver_id', Auth::user()->id)
+        ->first();
+    }
 }

@@ -68,4 +68,18 @@ class InvitationController extends Controller
         $receviedInvitationDetails = $this->invitationRepo->getAllReceivedInvitations();
         return $this->apiResponse($receviedInvitationDetails, 200, true);
     }
+
+    //get send invitation status
+    public function getSendInvitationStatus($proposal_id)
+    {
+        $invitationDetails = $this->invitationRepo->getSendInvitationStatus($proposal_id);
+        return $this->apiResponse($invitationDetails, 200, true);
+    }
+    
+    //get received invitation status
+    public function getReceivedInvitationStatus($proposal_id)
+    {
+        $invitationDetails = $this->invitationRepo->getReceivedInvitationStatus($proposal_id);
+        return $this->apiResponse($invitationDetails, 200, true);
+    }
 }

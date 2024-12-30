@@ -10,4 +10,6 @@ interface InvitationRepositoryInterface extends MainRepositoryInterface
     public function updateReceivedInvitationStatus($requestParams);
     public function getAllSentInvitations();
     public function getAllReceivedInvitations();
+    public function getSendInvitationStatus($proposalId);
+    public function getReceivedInvitationStatus($proposalId);
 }

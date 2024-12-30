@@ -21,5 +21,7 @@ Route::middleware('auth:api')->group(function () {
         Route::post('update-status-of-received', 'InvitationController@updateReceivedInvitationStatus');
         Route::get('get-all-sent', 'InvitationController@getAllSentInvitations');
         Route::get('get-all-received', 'InvitationController@getAllReceivedInvitations');
+        Route::get('get-send-status/{proposal_id}', 'InvitationController@getSendInvitationStatus');
+        Route::get('get-received-status/{proposal_id}', 'InvitationController@getReceivedInvitationStatus');
     });
 });
