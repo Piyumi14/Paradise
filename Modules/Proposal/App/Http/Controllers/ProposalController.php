@@ -404,6 +404,24 @@ class ProposalController extends Controller
         $proposals = $this->proposalRepo->getAllProposalsForAdmin();
         return $this->apiResponse($proposals, $this->response_status_code, true);
     }
+
+    //get proposal details by user id
+    public function getProposalDetailsByUserId($userId)
+    {
+        if ($userId) {
+            $proposal = $this->proposalRepo->getProposalDetailsByUserId($userId);
+            return $this->apiResponse($proposal, 200, true, 'proposal retrieved successfully');
+        }
+    }
+
+    //get profile image by user id
+    public function getProfileImageByUserId($userId)
+    {
+        if ($userId) {
+            $profileImage = $this->proposalRepo->getProfileImageByUserId($userId);
+            return $this->apiResponse($profileImage, 200, true, 'profile image retrieved successfully');
+        }
+    }
     
     public function test()
     {

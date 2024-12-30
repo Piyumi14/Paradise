@@ -176,4 +176,23 @@ class ProposalRepository extends MainRepository implements ProposalRepositoryInt
             ->orderBy('created_at', 'desc')
             ->get();
     }
+
+    //get proposal details by user id
+    public function getProposalDetailsByUserId($userId)
+    {
+        return Proposal::select('*')
+            ->where('user_id', $userId)
+            ->with('professionalEducational', 'parents', 'siblings', 'horoscope', 'gallery', 'payment')
+            ->first();
+    }
+
+    // get the main photo's image URL by user ID
+    public function getProfileImageByUserId($userId)
+    {
+        return Photo::select('photos.image_url')
+            ->join('proposals', 'photos.proposal_id', '=', 'proposals.id')
+            ->where('proposals.user_id', $userId)
+            ->where('photos.is_main_photo', true)
+            ->first();
+    }
 }

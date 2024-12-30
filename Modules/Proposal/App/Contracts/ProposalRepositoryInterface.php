@@ -17,4 +17,6 @@ interface ProposalRepositoryInterface extends MainRepositoryInterface
     public function approveProposalById($proposalId);
     public function getLatestReference();
     public function getAllProposalsForAdmin();
+    public function getProposalDetailsByUserId($userId);
+    public function getProfileImageByUserId($userId);
 }

@@ -21,9 +21,11 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->group(function () {
     Route::prefix('proposal')->group(function () {
         Route::get('get-all', 'ProposalController@getAllProposals');
-        Route::get('get-by-id/{id}', 'ProposalController@getProposalById');
-        Route::get('edit/{id}', 'ProposalController@editProposal');
-        Route::post('approve/{id}', 'ProposalController@approveProposal');
+        Route::get('get-by-id/{proposal_id}', 'ProposalController@getProposalById');
+        Route::get('get-by-user-id/{user_id}', 'ProposalController@getProposalDetailsByUserId');
+        Route::get('edit/{proposal_id}', 'ProposalController@editProposal');
+        Route::post('approve/{proposal_id}', 'ProposalController@approveProposal');
+        Route::get('profile-image/{user_id}', 'ProposalController@getProfileImageByUserId');
 
         Route::post('send-email', 'ProposalController@sendEmail');
         Route::post('send-sms', 'ProposalController@sendSMS');
