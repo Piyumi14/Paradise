@@ -47,7 +47,7 @@ class ProposalController extends Controller
                 'type' => !empty($requestParams['sortDirection']) ? $requestParams['sortDirection'] : 'desc',
             ],
             'search' => !empty($requestParams['search']) ? $requestParams['search'] : '',
-            'paginate' => !empty($requestParams['count_per_page']) ? $requestParams['count_per_page'] : 20,
+            'paginate' => !empty($requestParams['count_per_page']) ? $requestParams['count_per_page'] : 9,
         ];
     }
 
@@ -117,7 +117,7 @@ class ProposalController extends Controller
             // 09. create payment details
             if (isset($requestParams['payment'][0])) {
                 $paymentReceipt = $this->_savePaymentImage($requestParams['payment']);
-            }else{
+            } else {
                 $paymentReceipt = [];
             }
 
@@ -422,7 +422,7 @@ class ProposalController extends Controller
             return $this->apiResponse($profileImage, 200, true, 'profile image retrieved successfully');
         }
     }
-    
+
     public function test()
     {
         dd('test');
