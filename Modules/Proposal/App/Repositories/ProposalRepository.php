@@ -41,7 +41,7 @@ class ProposalRepository extends MainRepository implements ProposalRepositoryInt
     public function getAllProposals($options, $pluck = '')
     {
         $matchingGender = Auth::user()->gender === 'Male' ? "Female" : "Male";
-        $proposals = Proposal::query()->select("*")->where('gender', $matchingGender);
+        $proposals = Proposal::query()->select("*")->where('gender', $matchingGender)->where('status', '1');
 
         if (!empty($options['sortBy'])) {
             if ($options['sortBy']['column'] == '') {

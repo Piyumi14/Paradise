@@ -47,7 +47,7 @@ class ProposalController extends Controller
                 'type' => !empty($requestParams['sortDirection']) ? $requestParams['sortDirection'] : 'desc',
             ],
             'search' => !empty($requestParams['search']) ? $requestParams['search'] : '',
-            'paginate' => !empty($requestParams['count_per_page']) ? $requestParams['count_per_page'] : 9,
+            'paginate' => !empty($requestParams['count_per_page']) ? $requestParams['count_per_page'] : 10,
         ];
     }
 

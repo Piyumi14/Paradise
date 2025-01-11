@@ -21,7 +21,7 @@ use Modules\User\App\Http\Controllers\AuthController;
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
-Route::middleware('auth:api')->post('log-out', [AuthController::class, 'logout']);
+Route::post('log-out', [AuthController::class, 'logout']);
 
 
 Route::middleware('auth:api')->group(function () {

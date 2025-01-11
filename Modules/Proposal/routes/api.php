@@ -24,15 +24,15 @@ Route::middleware('auth:api')->group(function () {
         Route::get('get-by-id/{proposal_id}', 'ProposalController@getProposalById');
         Route::get('get-by-user-id/{user_id}', 'ProposalController@getProposalDetailsByUserId');
         Route::get('edit/{proposal_id}', 'ProposalController@editProposal');
-        Route::post('approve/{proposal_id}', 'ProposalController@approveProposal');
         Route::get('profile-image/{user_id}', 'ProposalController@getProfileImageByUserId');
 
         Route::post('send-email', 'ProposalController@sendEmail');
         Route::post('send-sms', 'ProposalController@sendSMS');
-
-        Route::get('get-all-for-admin', 'ProposalController@getAllProposalsForAdmin');
     });
 });
 
 Route::post('proposal/create', 'ProposalController@createProposal');
+Route::get('proposal/get-proposal-by-admin/{proposal_id}', 'ProposalController@getProposalById');
+Route::get('proposal/get-all-for-admin', 'ProposalController@getAllProposalsForAdmin');
+Route::post('proposal/approve/{proposal_id}', 'ProposalController@approveProposal');
 Route::get('test', 'ProposalController@test');

