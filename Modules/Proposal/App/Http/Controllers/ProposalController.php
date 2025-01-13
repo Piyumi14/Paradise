@@ -96,9 +96,11 @@ class ProposalController extends Controller
             $this->proposalRepo->createParentsDetails($parentsData);
 
             // 06. create siblings details
-            foreach ($requestParams['siblings'] as $sibling) {
-                $siblingsData = $this->_setSiblingsPostData($requestParams['proposal_id'], $sibling);
-                $this->proposalRepo->createSiblingsDetails($siblingsData);
+            if (isset($requestParams['siblings'])) {
+                foreach ($requestParams['siblings'] as $sibling) {
+                    $siblingsData = $this->_setSiblingsPostData($requestParams['proposal_id'], $sibling);
+                    $this->proposalRepo->createSiblingsDetails($siblingsData);
+                }
             }
 
             // 07. create horoscope details
