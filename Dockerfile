@@ -26,15 +26,24 @@ RUN sed -i 's|/var/www/html|/var/www/html/public|' /etc/apache2/sites-available/
 COPY . .
 
 # Run composer install after copying files
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-dev --optimize-autoloader && \
+composer clear-cache
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/storage \
     && chmod -R 775 /var/www/html/bootstrap/cache
 
+RUN  chmod +x entrypoint.sh
+
+# Set entrypoint
+ENTRYPOINT ["/var/www/html/entrypoint.sh"]
+
+
 # Expose Apache's default port
 EXPOSE 80
+
+HEALTHCHECK CMD curl --fail http://localhost || exit 1
 
 # Start Apache
 CMD ["apache2-foreground"]
