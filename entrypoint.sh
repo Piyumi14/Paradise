@@ -7,6 +7,11 @@ set -e
 echo "Running migrations..."
 php artisan migrate --force
 
+# passport:install will create the encryption keys needed to generate secure access tokens
+echo "Installing Laravel Passport..."
+php artisan key:generate
+php artisan passport:install --force --no-interaction
+
 # Generate Passport keys if they don't exist
 if [ ! -f storage/oauth-private.key ] || [ ! -f storage/oauth-public.key ]; then
     echo "Generating Laravel Passport keys..."
