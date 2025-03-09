@@ -20,6 +20,9 @@ if [ ! -f storage/oauth-private.key ] || [ ! -f storage/oauth-public.key ]; then
     chown -R www-data:www-data storage/oauth
 fi
 
+chown -R www-data:www-data storage bootstrap/cache
+chmod -R 775 storage bootstrap/cache
+
 # Clear and cache configurations
 echo "Clearing and caching configuration..."
 php artisan config:clear
