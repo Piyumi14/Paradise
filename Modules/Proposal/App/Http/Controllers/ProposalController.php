@@ -128,8 +128,8 @@ class ProposalController extends Controller
 
             // 10. send email and sms to admin
             if (env('ENABLE_EMAIL_AND_SMS', true) == true) {
-                $this->sendEmail($requestParams['main_details'], $newReference);
-                $this->sendSMS($newReference);
+                // $this->sendEmail($requestParams['main_details'], $newReference);
+                $this->sendSMS($newReference, $userData['password']);
             }
 
             // commit the transaction
@@ -186,13 +186,12 @@ class ProposalController extends Controller
 
     private function _generateRandomPassword($length = 12)
     {
-        $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+';
+        $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         $password = '';
         for ($i = 0; $i < $length; $i++) {
             $password .= $characters[random_int(0, strlen($characters) - 1)];
         }
-        // return $password;
-        return "password@123";
+        return $password;
     }
 
     private function _setMainProposalPostData($userId, $reference, $mainDetails)
@@ -345,11 +344,11 @@ class ProposalController extends Controller
     }
 
     //send sms
-    public function sendSMS($newReference)
+    public function sendSMS($newReference, $password)
     {
         $requestParams = [
             'phone_number' => '94710197538',
-            'message' => "Hi Admin, New user has been registered now. Ref number: $newReference",
+            'message' => "Hi Admin, New user has been registered now. Ref number: $newReference . The password: $password",
         ];
         return sendSMS($requestParams);
     }

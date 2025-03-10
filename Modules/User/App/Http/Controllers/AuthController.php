@@ -69,6 +69,9 @@ class AuthController extends Controller
 
         // Find user credentials by username
         $credentials = UserCredential::where('user_name', $validatedData['user_name'])->first();
+    
+        $validatedData['password'] = trim($validatedData['password']);
+        $validatedData['password'] = (string) $validatedData['password'];
 
         // Check if credentials exist and the password matches
         if (!$credentials || !Hash::check($validatedData['password'], $credentials->password)) {
