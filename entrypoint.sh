@@ -4,13 +4,13 @@
 set -e
 
 # Run migrations with --force (to avoid issues with production environment)
-echo "Running migrations..."
-php artisan migrate --force
-
-# passport:install will create the encryption keys needed to generate secure access tokens
-echo "Installing Laravel Passport..."
-php artisan key:generate
-php artisan passport:install --force --no-interaction
+echo "Checking if migrations need to be run..."
+if ! php artisan migrate --pretend | grep -q "Nothing to migrate"; then
+    echo "Running migrations..."
+    php artisan migrate --force
+else
+    echo "Migrations already applied, skipping..."
+fi
 
 # Generate Passport keys if they don't exist
 if [ ! -f storage/oauth-private.key ] || [ ! -f storage/oauth-public.key ]; then
@@ -18,6 +18,8 @@ if [ ! -f storage/oauth-private.key ] || [ ! -f storage/oauth-public.key ]; then
     php artisan passport:keys
     chmod -R 755 storage/oauth
     chown -R www-data:www-data storage/oauth
+else
+    echo "Passport keys already exist, skipping key generation..."
 fi
 
 chown -R www-data:www-data storage bootstrap/cache
@@ -32,14 +34,17 @@ php artisan route:cache
 php artisan view:cache
 
 # Create symbolic storage link (if not already created)
-echo "Creating storage symbolic link..."
-php artisan storage:link || true
+if [ ! -L public/storage ] && [ -d storage/app/public ]; then
+    echo "Creating storage symbolic link..."
+    php artisan storage:link
+else
+    echo "Storage symbolic link already exists, skipping..."
+fi
 
-# Generate application key if it's not set
+# Generate application key if .env does not exist
 if [ ! -f .env ]; then
     echo "Generating application key..."
     php artisan key:generate
 fi
-
 
 exec "$@"

@@ -1,0 +1,33 @@
+services:
+    app:
+        build: .
+        container_name: paradise-backend
+        restart: always
+        working_dir: /var/www/html
+        volumes:
+            - .:/var/www/html
+        ports:
+            - "8000:80"
+        command:
+            [
+                "sh",
+                "-c",
+                "composer install --no-dev --optimize-autoloader && apache2-foreground",
+            ]
+        networks:
+            - paradise_network
+
+    queue:
+        build: .
+        container_name: paradise-queue-worker
+        restart: alwayss
+        working_dir: /var/www/html
+        volumes:
+            - .:/var/www/html
+        command: ["php", "artisan", "queue:work"]
+        networks:
+            - paradise_network
+
+networks:
+    paradise_network:
+        driver: bridge
